@@ -36,6 +36,7 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 				 subtitle:(BOOL)hasSubtitle;
 
 - (void)handleLongPressGesture:(UILongPressGestureRecognizer *)longPress;
+- (void)handleTapPressGesture:(UITapGestureRecognizer *)tap;
 
 - (void)handleMenuWillHideNotification:(NSNotification *)notification;
 - (void)handleMenuWillShowNotification:(NSNotification *)notification;
@@ -66,6 +67,11 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
                                                                                              action:@selector(handleLongPressGesture:)];
     [recognizer setMinimumPressDuration:0.4f];
     [self addGestureRecognizer:recognizer];
+
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                    action:@selector(handleTapPressGesture:)];
+    [tapRecognizer setNumberOfTapsRequired:1];
+    [self addGestureRecognizer:tapRecognizer];
 }
 
 - (void)configureTimestampLabel
@@ -227,9 +233,12 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 
 #pragma mark - Setters
 
-- (void)setMessage:(NSString *)msg
+- (void)setMessage:(JSMessage *)msg
 {
-    self.bubbleView.textView.text = msg;
+    self.bubbleView.message = msg;
+    
+    self.bubbleView.textView.text = msg.textMessage;
+    [self.bubbleView setMessageImage:msg.thumbnailImage];
 }
 
 - (void)setTimestamp:(NSDate *)date
@@ -261,18 +270,17 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 
 #pragma mark - Class methods
 
-+ (CGFloat)neededHeightForBubbleMessageCellWithText:(NSString *)text
-                                          timestamp:(BOOL)hasTimestamp
-                                             avatar:(BOOL)hasAvatar
-                                           subtitle:(BOOL)hasSubtitle
++ (CGFloat)neededHeightForBubbleMessageCellWithMessage:(JSMessage *)message
+                                             timestamp:(BOOL)hasTimestamp
+                                                avatar:(BOOL)hasAvatar
+                                              subtitle:(BOOL)hasSubtitle
 {
     CGFloat timestampHeight = hasTimestamp ? kJSTimeStampLabelHeight : 0.0f;
     CGFloat avatarHeight = hasAvatar ? kJSAvatarImageSize : 0.0f;
 	CGFloat subtitleHeight = hasSubtitle ? kJSSubtitleLabelHeight : 0.0f;
     
     CGFloat subviewHeights = timestampHeight + subtitleHeight + kJSLabelPadding;
-    
-    CGFloat bubbleHeight = [JSBubbleView neededHeightForText:text];
+    CGFloat bubbleHeight = [JSBubbleView neededHeightForMessage:message];
     
     return subviewHeights + MAX(avatarHeight, bubbleHeight);
 }
@@ -305,7 +313,7 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
-    return (action == @selector(copy:));
+    return (action == @selector(copy:) && ![self.bubbleView isImageMessage]);
 }
 
 - (void)copy:(id)sender
@@ -334,6 +342,21 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
                                                  name:UIMenuControllerWillShowMenuNotification
                                                object:nil];
     [menu setMenuVisible:YES animated:YES];
+    
+#warning not sure this needs to be here -- has it been refactored out?
+    [self.bubbleView layoutSubviews];
+}
+
+- (void)handleTapPressGesture:(UITapGestureRecognizer *)tap
+{
+    if( ![self becomeFirstResponder])
+        return;
+    
+    if (![self.bubbleView isImageMessage])
+        return;
+    
+#warning this needs to be refactored to call into a delegate rather than throw a notification message
+//    [[NSNotificationCenter defaultCenter] postNotificationName:MEDIA_TAPPED_TO_SEE_NOTFICATION object:[NSNumber numberWithInteger:self.tag]];
 }
 
 #pragma mark - Notifications

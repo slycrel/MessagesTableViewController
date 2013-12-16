@@ -25,6 +25,7 @@
 - (void)setup;
 
 - (void)sendPressed:(UIButton *)sender;
+- (void)attachImagePressed:(UIButton *)sender;
 
 - (BOOL)shouldHaveTimestampForRowAtIndexPath:(NSIndexPath *)indexPath;
 - (BOOL)shouldHaveAvatarForRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -58,7 +59,7 @@
     CGSize size = self.view.frame.size;
     
     JSMessageInputViewStyle inputViewStyle = [self.delegate inputViewStyle];
-    CGFloat inputViewHeight = (inputViewStyle == JSMessageInputViewStyleFlat) ? 45.0f : 40.0f;
+    CGFloat inputViewHeight = (inputViewStyle & JSMessageInputViewStyleFlat) ? 45.0f : 40.0f;
     
     CGRect tableFrame = CGRectMake(0.0f, 0.0f, size.width, size.height - inputViewHeight);
 	UITableView *tableView = [[UITableView alloc] initWithFrame:tableFrame style:UITableViewStylePlain];
@@ -90,6 +91,11 @@
                              action:@selector(sendPressed:)
                    forControlEvents:UIControlEventTouchUpInside];
     
+    inputView.attachImageButton.enabled = YES;
+    [inputView.attachImageButton addTarget:self
+                                    action:@selector(attachImagePressed:)
+                          forControlEvents:UIControlEventTouchUpInside];
+
     [self.view addSubview:inputView];
     _messageInputView = inputView;
     
@@ -187,7 +193,12 @@
 
 - (void)sendPressed:(UIButton *)sender
 {
-    [self.delegate didSendText:[self.messageInputView.textView.text js_stringByTrimingWhitespace]];
+    [self.delegate didSendMessageData:[[JSMessage alloc] initWithTextMessage:[self.messageInputView.textView.text js_stringByTrimingWhitespace]]];
+}
+
+- (void)attachImagePressed:(UIButton *)sender
+{
+    [self.delegate didSendMessageData:[self.delegate attachedMediaMessage]];
 }
 
 #pragma mark - Table view data source
@@ -237,7 +248,9 @@
 		[cell setSubtitle:[self.dataSource subtitleForRowAtIndexPath:indexPath]];
     }
     
-    [cell setMessage:[self.dataSource textForRowAtIndexPath:indexPath]];
+    JSMessage* messageData = [self.dataSource messageForRowAtIndexPath:indexPath];
+    
+    [cell setMessage:messageData];
     [cell setBackgroundColor:tableView.backgroundColor];
     
     cell.bubbleView.textView.dataDetectorTypes = UIDataDetectorTypeAll;
@@ -253,16 +266,16 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *text = [self.dataSource textForRowAtIndexPath:indexPath];
+    JSMessage *message = [self.dataSource messageForRowAtIndexPath:indexPath];
     
     BOOL hasTimestamp = [self shouldHaveTimestampForRowAtIndexPath:indexPath];
     BOOL hasAvatar = [self shouldHaveAvatarForRowAtIndexPath:indexPath];
 	BOOL hasSubtitle = [self shouldHaveSubtitleForRowAtIndexPath:indexPath];
     
-    return [JSBubbleMessageCell neededHeightForBubbleMessageCellWithText:text
-                                                               timestamp:hasTimestamp
-                                                                  avatar:hasAvatar
-                                                                subtitle:hasSubtitle];
+    return [JSBubbleMessageCell neededHeightForBubbleMessageCellWithMessage:message
+                                                                  timestamp:hasTimestamp
+                                                                     avatar:hasAvatar
+                                                                   subtitle:hasSubtitle];
 }
 
 #pragma mark - Messages view controller
@@ -327,10 +340,14 @@
     }
 }
 
-- (void)finishSend
+- (void)finishSendingMessage:(BOOL)isToFlushInputView
 {
-    [self.messageInputView.textView setText:nil];
-    [self textViewDidChange:self.messageInputView.textView];
+    
+    if (isToFlushInputView) {
+        [self.messageInputView.textView setText:nil];
+        [self textViewDidChange:self.messageInputView.textView];
+    }
+    
     [self.tableView reloadData];
 }
 

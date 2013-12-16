@@ -45,6 +45,12 @@
  */
 @property (weak, nonatomic, readonly) UILabel *subtitleLabel;
 
+/**
+ *  Returns the image view containing the attached image for this bubble view.
+ */
+@property (strong, nonatomic, readonly) UIImageView *attachedImageView;
+
+
 #pragma mark - Initialization
 
 /**
@@ -73,7 +79,7 @@
  *
  *  @param msg The message text for the cell.
  */
-- (void)setMessage:(NSString *)msg;
+- (void)setMessage:(JSMessage *)msg;
 
 /**
  *  Sets the date to be displayed in the timestampLabel of the cell. The date is formatted for you via `NSDateFormatter` by `JSBubbleMessageCell`.
@@ -111,16 +117,15 @@
 /**
  *  Computes and returns the minimum necessary height of a `JSBubbleMessageCell` needed to display its contents.
  *
- *  @param text         The text to display in the cell.
+ *  @param message      The message to display in the cell.
  *  @param hasTimestamp A boolean value indicating whether or not the cell has a timestamp.
  *  @param hasAvatar    A boolean value indicating whether or not the cell has an avatar.
  *  @param hasSubtitle  A boolean value indicating whether or not the cell has a subtitle.
  *
  *  @return The height required for the frame of the cell in order for the cell to display the entire contents of its subviews.
  */
-+ (CGFloat)neededHeightForBubbleMessageCellWithText:(NSString *)text
-                                          timestamp:(BOOL)hasTimestamp
-                                             avatar:(BOOL)hasAvatar
-                                           subtitle:(BOOL)hasSubtitle;
-
++ (CGFloat)neededHeightForBubbleMessageCellWithMessage:(JSMessage *)message
+                                             timestamp:(BOOL)hasTimestamp
+                                                avatar:(BOOL)hasAvatar
+                                              subtitle:(BOOL)hasSubtitle;
 @end

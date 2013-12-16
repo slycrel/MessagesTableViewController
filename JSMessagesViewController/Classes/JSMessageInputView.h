@@ -17,16 +17,22 @@
 
 /**
  *  The appearance style of the input bar view for composing a new message.
+ *
+ *  To include the left adornment, add "| JSMessageInputViewStyleIncludesAdornment" to your preferred look.
  */
 typedef NS_ENUM(NSUInteger, JSMessageInputViewStyle) {
     /**
      *  An input view style that has the appearance as seen in iOS 6 and before.
      */
-    JSMessageInputViewStyleClassic,
+    JSMessageInputViewStyleClassic = 0x1000,
     /**
      *  An input view style that has the appearance as seen in iOS 7 and later.
      */
-    JSMessageInputViewStyleFlat
+    JSMessageInputViewStyleFlat = 0x2000,
+    /**
+     *  An input view style that has the appearance as seen in iOS 7 and later including an icon on the left of the text field.
+     */
+    JSMessageInputViewStyleIncludesAdornment = 0x0001
 };
 
 
@@ -51,6 +57,13 @@ typedef NS_ENUM(NSUInteger, JSMessageInputViewStyle) {
  *  @see JSMessageInputViewStyle.
  */
 @property (weak, nonatomic) UIButton *sendButton;
+
+/**
+ *  The attach image button for the input view. The default value is an initialized `UIButton` whose appearance is styled according to the value of style during initialization.
+ *  @see JSMessageInputViewStyle.
+ */
+@property (weak, nonatomic) UIButton *attachImageButton;
+
 
 #pragma mark - Initialization
 
