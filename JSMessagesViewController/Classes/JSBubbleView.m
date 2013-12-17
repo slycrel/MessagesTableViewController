@@ -35,9 +35,7 @@
 - (void)addTextViewObservers;
 - (void)removeTextViewObservers;
 
-+ (CGSize)bubbleSizeForText:(NSString *)txt;
-+ (CGSize)neededSizeForText:(NSString *)text;
-+ (CGFloat)neededHeightForMessage:(JSMessage *)message;
++ (CGSize)textSizeForText:(NSString *)txt;
 + (CGSize)bubbleSizeForImage:(UIImage *)image;
 
 @end
@@ -159,19 +157,9 @@
     }
 }
 
+
 #pragma mark - Setters
 
-- (void)setType:(JSBubbleMessageType)type
-{
-    _type = type;
-    [self setNeedsLayout];
-}
-
-- (void)setText:(NSString *)text
-{
-    self.textView.text = text;
-    [self setNeedsLayout];
-}
 
 - (void)setMessageImage:(UIImage *)image
 {
@@ -186,7 +174,6 @@
                                               imageFrameSize.width,
                                               imageFrameSize.height);
         [self addSubview:_attachedImageView];
-        [self setNeedsLayout];
     }
     
 }
@@ -195,12 +182,6 @@
 {
     _font = font;
     _textView.font = font;
-}
-
-- (void)setTextColor:(UIColor *)textColor
-{
-    self.textView.textColor = textColor;
-    [self setNeedsLayout];
 }
 
 #pragma mark - UIAppearance Getters
@@ -227,12 +208,7 @@
 
 - (CGRect)bubbleFrame
 {
-    CGSize textSize = [JSBubbleView neededSizeForText:self.textView.text];
-    CGSize imageSize = [JSBubbleView bubbleSizeForImage:self.attachedImageView.image];
-    
-    // Check If there is an image attached , or It is Just a regular text Message.
-    CGSize bubbleSize = CGSizeMake( MAX(imageSize.width, textSize.width), round (imageSize.height + textSize.height));
-
+    CGSize bubbleSize = [JSBubbleView bubbleSizeForText:self.textView.text withImage:self.attachedImageView.image];
     return CGRectMake((self.type == JSBubbleMessageTypeOutgoing ? self.frame.size.width - bubbleSize.width : 0.0f),
                       kMarginTop,
                       bubbleSize.width,
@@ -303,6 +279,19 @@
     view.layer.mask = shape;
 }
 
+
++ (CGSize)textSizeForText:(NSString *)text
+{
+    CGFloat maxWidth = [UIScreen mainScreen].applicationFrame.size.width * 0.70f;
+    CGFloat maxHeight = MAX([JSMessageTextView numberOfLinesForMessage:text],
+                            [text js_numberOfLines]) * [JSMessageInputView textViewLineHeight];
+    maxHeight += kJSAvatarImageSize;
+    
+    return [text sizeWithFont:[[JSBubbleView appearance] font]
+            constrainedToSize:CGSizeMake(maxWidth, maxHeight)];
+}
+
+
 + (CGSize)bubbleSizeForImage:(UIImage *)image
 {
     CGSize imageSize = CGSizeZero;
@@ -320,22 +309,10 @@
 }
 
 
-+ (CGSize)bubbleSizeForText:(NSString *)text
++ (CGSize)bubbleSizeForText:(NSString *)text withImage:(UIImage *)image
 {
-    CGFloat maxWidth = [UIScreen mainScreen].applicationFrame.size.width * 0.70f;
-    CGFloat maxHeight = MAX([JSMessageTextView numberOfLinesForMessage:text],
-                         [text js_numberOfLines]) * [JSMessageInputView textViewLineHeight];
-    maxHeight += kJSAvatarImageSize;
-    
-    return [text sizeWithFont:[[JSBubbleView appearance] font]
-           constrainedToSize:CGSizeMake(maxWidth, maxHeight)];
-}
-
-
-+ (CGSize)bubbleSizeForMessage:(JSMessage *)message
-{
-	CGSize textSize = [self bubbleSizeForText:message.textMessage];
-    CGSize imageSize = [self bubbleSizeForImage:message.thumbnailImage];
+    CGSize textSize = [self textSizeForText:text];
+    CGSize imageSize = [self bubbleSizeForImage:image];
     
     // Check If there is an image attached , or It is Just a regular text Message.
     CGSize bubbleSize = CGSizeMake( MAX(imageSize.width, textSize.width), round (imageSize.height + textSize.height));
@@ -345,12 +322,9 @@
 }
 
 
-+ (CGSize)neededSizeForText:(NSString *)text
++ (CGSize)bubbleSizeForMessage:(JSMessage *)message
 {
-    CGSize textSize = [JSBubbleView bubbleSizeForText:text];
-    
-    return CGSizeMake(textSize.width + kBubblePaddingRight,
-                      textSize.height + kPaddingTop + kPaddingBottom);
+    return [self bubbleSizeForText:message.textMessage withImage:message.thumbnailImage];
 }
 
 
