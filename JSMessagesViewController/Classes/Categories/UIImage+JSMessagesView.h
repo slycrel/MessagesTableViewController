@@ -60,20 +60,5 @@
  */
 - (UIImage *)js_imageMaskWithColor:(UIColor *)maskColor;
 
-/**
- *  returns a new image object that has the play overlay above the image.
- *
- *  @return A new image object with the video play overlay.
- */
-- (UIImage *) js_imageOverlayAPlayButtonAbove;
-
-/**
- *  Creates and returns a new image object that is the passed size.
- *
- *  @param size The new size value for the image.
- *
- *  @return A new image object with the specified size.
- */
-- (UIImage *)js_imageResizeWithSize:(CGSize)size;
 
 @end

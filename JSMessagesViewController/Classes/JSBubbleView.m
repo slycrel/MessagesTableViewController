@@ -178,11 +178,28 @@
     
 }
 
+
 - (void)setFont:(UIFont *)font
 {
     _font = font;
     _textView.font = font;
 }
+
+
+-(void) setPlayButtonOverlay
+{
+    UIImage *watermarkImage = [self playButtonOverlayImage];
+    CGRect frame = self.attachedImageView.frame;
+    frame.origin = CGPointZero;
+    
+    UIImageView* playImageView = [[UIImageView alloc] initWithFrame:frame];
+    playImageView.image = watermarkImage;
+    playImageView.contentMode = UIViewContentModeCenter;
+    
+    if (watermarkImage && playImageView)
+        [_attachedImageView addSubview:playImageView];
+}
+
 
 #pragma mark - UIAppearance Getters
 
@@ -216,9 +233,13 @@
 }
 
 
--(void) setPlayButtonOverlay
+#pragma mark - Override for customization
+// these probably should be in some kind of delegate in the future.
+
+
+- (UIImage *)playButtonOverlayImage
 {
-    [_attachedImageView setImage:[[_attachedImageView.image js_imageResizeWithSize:_attachedImageView.frame.size] js_imageOverlayAPlayButtonAbove]];
+    return [UIImage imageNamed:@"play-media-button.png"];
 }
 
 
