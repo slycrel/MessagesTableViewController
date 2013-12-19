@@ -80,7 +80,6 @@
  *  @param image The message attached Image to be displayed in the bubble view.
  */
 - (void)setMessageImage:(UIImage *)image;
-#warning do we still need setText: or has that been refactored out?
 
 #pragma mark - Getters
 

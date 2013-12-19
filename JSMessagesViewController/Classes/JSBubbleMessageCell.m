@@ -343,8 +343,7 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
                                                object:nil];
     [menu setMenuVisible:YES animated:YES];
     
-#warning not sure this needs to be here -- has it been refactored out?
-    [self.bubbleView layoutSubviews];
+    [self.bubbleView setNeedsLayout];
 }
 
 - (void)handleTapPressGesture:(UITapGestureRecognizer *)tap
@@ -355,7 +354,6 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
     if (![self.bubbleView isImageMessage])
         return;
     
-#warning this needs to be refactored to call into a delegate rather than throw a notification message
 //    [[NSNotificationCenter defaultCenter] postNotificationName:MEDIA_TAPPED_TO_SEE_NOTFICATION object:[NSNumber numberWithInteger:self.tag]];
 }
 

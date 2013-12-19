@@ -295,7 +295,6 @@ typedef NS_ENUM(NSUInteger, JSMessagesViewSubtitlePolicy) {
  *  @see JSMessagesViewDelegate.
  */
 - (void)finishSendingMessage:(BOOL) isToFlushInputView;
-#warning this should be refactored (or at least renamed?  Kind of confusing with the param on what it actually does)
 
 /**
  *  Sets the background color of the table view, the table view cells, and the table view separator.
