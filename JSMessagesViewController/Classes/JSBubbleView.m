@@ -194,7 +194,7 @@
     
     UIImageView* playImageView = [[UIImageView alloc] initWithFrame:frame];
     playImageView.image = watermarkImage;
-    playImageView.contentMode = UIViewContentModeCenter;
+    playImageView.contentMode = UIViewContentModeBottomRight;
     
     if (watermarkImage && playImageView)
         [_attachedImageView addSubview:playImageView];
