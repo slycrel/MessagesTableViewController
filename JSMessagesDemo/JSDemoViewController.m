@@ -121,8 +121,8 @@
     NSURL * moreInfoURL = [NSURL URLWithString:@"http://www.github.com"];
     
     int random = (arc4random_uniform(100) % 3) + 1 ;
-    image = [UIImage imageNamed:[NSString stringWithFormat:@"test%d.jpg" , random]];
-    
+    image = [UIImage imageNamed:[NSString stringWithFormat:@"test%d.png" , random]];
+  
     
     random = (arc4random_uniform(100) % 2) ;
     userSelectedMediaMessage = (random == 0) ? [[JSMessage alloc] initWithImageMessage:image descrption:@"Description for Image" linkedToURL:moreInfoURL]:[[JSMessage alloc] initWithVideoMessage:image descrption:@"Description for Video" linkedToURL:moreInfoURL];
@@ -210,7 +210,7 @@
     if (cell.bubbleView.attachedImageView) {
         
         if([cell messageType] == JSBubbleMessageTypeOutgoing) {
-            [cell.bubbleView.textView setTextColor:[UIColor lightGrayColor]];
+            [cell.bubbleView.textView setTextColor:[UIColor whiteColor]];
         }else
         {
             [cell.bubbleView.textView setTextColor:[UIColor darkGrayColor]];
