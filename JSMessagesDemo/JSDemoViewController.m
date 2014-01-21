@@ -41,6 +41,7 @@
                      [[JSMessage alloc] initWithTextMessage:@"It's highly customizable."],
                      [[JSMessage alloc] initWithTextMessage:@"It even has data detectors. You can call me tonight. My cell number is 452-123-4567. \nMy website is www.hexedbits.com."],
                      [[JSMessage alloc] initWithTextMessage:@"Group chat is possible. Sound effects and images included. Animations are smooth. Messages can be of arbitrary size!"],
+                     [[JSMessage alloc] initWithTextMessage:@"Group chat is possible. Sound effects and images included. Animations are smooth. Messages can be of arbitrary size!"],
                      [[JSMessage alloc] initWithVideoMessage:[UIImage imageNamed:@"test3.jpg"] descrption:@"Apple WWDC 2011: Steve Jobs' keynote" linkedToURL:[NSURL URLWithString:@"http://www.apple.com"]],
                      nil];
     
@@ -50,6 +51,8 @@
                        [NSDate distantPast],
                        [NSDate distantPast],
                        [NSDate date],
+                       [NSDate date],
+                       [NSDate date],
                        nil];
     
     self.subtitles = [[NSMutableArray alloc] initWithObjects:
@@ -57,7 +60,9 @@
                       kSubtitleWoz,
                       kSubtitleJobs,
                       kSubtitleCook,
-                      kSubtitleJobs, nil];
+                      kSubtitleJobs,
+                      kSubtitleCook,
+                      nil];
     
     self.avatars = [[NSDictionary alloc] initWithObjectsAndKeys:
                     [JSAvatarImageFactory avatarImageNamed:@"demo-avatar-jobs" croppedToCircle:YES], kSubtitleJobs,

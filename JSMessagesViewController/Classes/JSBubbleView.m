@@ -87,7 +87,7 @@
         _textView = textView;
         
         if([_textView respondsToSelector:@selector(textContainerInset)]) {
-            _textView.textContainerInset = UIEdgeInsetsMake(6.0f, 4.0f, 2.0f, 4.0f);
+            _textView.textContainerInset = UIEdgeInsetsMake(8.0f, 4.0f, 2.0f, 4.0f);
         }
         
         [self addTextViewObservers];
@@ -226,10 +226,11 @@
 - (CGRect)bubbleFrame
 {
     CGSize bubbleSize = [JSBubbleView bubbleSizeForText:self.textView.text withImage:self.attachedImageView.image];
-    return CGRectMake((self.type == JSBubbleMessageTypeOutgoing ? self.frame.size.width - bubbleSize.width : 0.0f),
-                      kMarginTop,
-                      bubbleSize.width,
-                      bubbleSize.height + kMarginTop);
+
+    return CGRectIntegral(CGRectMake((self.type == JSBubbleMessageTypeOutgoing ? self.frame.size.width - bubbleSize.width : 0.0f),
+                                     kMarginTop,
+                                     bubbleSize.width,
+                                     bubbleSize.height + kMarginTop));
 }
 
 
@@ -284,7 +285,7 @@
                                   self.bubbleImageView.frame.size.width - (self.bubbleImageView.image.capInsets.right / 2.0f),
                                   self.bubbleImageView.frame.size.height - kMarginTop);
     
-    self.textView.frame = textFrame;
+    self.textView.frame = CGRectIntegral(textFrame);
 }
 
 #pragma mark - Bubble view
@@ -308,15 +309,22 @@
                             [text js_numberOfLines]) * [JSMessageInputView textViewLineHeight];
     maxHeight += kJSAvatarImageSize;
     
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_7_0
-    return [text boundingRectWithSize:CGSizeMake(maxWidth, maxHeight)
-                              options:NSStringDrawingUsesLineFragmentOrigin
-                           attributes:@{NSFontAttributeName: [[JSBubbleView appearance] font]}
-                              context:nil].size;
-#else
-    return [text sizeWithFont:[[JSBubbleView appearance] font]
-            constrainedToSize:CGSizeMake(maxWidth, maxHeight)];
-#endif
+    CGSize stringSize;
+    
+    if (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_0) {
+        CGRect stringRect = [text boundingRectWithSize:CGSizeMake(maxWidth, maxHeight)
+                                              options:NSStringDrawingUsesLineFragmentOrigin
+                                           attributes:@{ NSFontAttributeName : [[JSBubbleView appearance] font] }
+                                              context:nil];
+        
+        stringSize = CGRectIntegral(stringRect).size;
+    }
+    else {
+        stringSize = [text sizeWithFont:[[JSBubbleView appearance] font]
+                     constrainedToSize:CGSizeMake(maxWidth, maxHeight)];
+    }
+    
+    return CGSizeMake(roundf(stringSize.width), roundf(stringSize.height));
 }
 
 
