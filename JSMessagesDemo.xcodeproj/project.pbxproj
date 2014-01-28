@@ -107,6 +107,7 @@
 		88E43C7F1830138A0045E52D /* bubble-classic-selected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 88E43C7D1830138A0045E52D /* bubble-classic-selected@2x.png */; };
 		88E43C821830147E0045E52D /* bubble-classic-typing.png in Resources */ = {isa = PBXBuildFile; fileRef = 88E43C801830147E0045E52D /* bubble-classic-typing.png */; };
 		88E43C831830147E0045E52D /* bubble-classic-typing@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 88E43C811830147E0045E52D /* bubble-classic-typing@2x.png */; };
+		D8BD150D189810AD00FACA91 /* JSMessageWithImages.m in Sources */ = {isa = PBXBuildFile; fileRef = D8BD150C189810AD00FACA91 /* JSMessageWithImages.m */; };
 		FF5F1C19A2B14956BCA42EBB /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AFF9601294443728D9481E0 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -219,6 +220,8 @@
 		88E43C811830147E0045E52D /* bubble-classic-typing@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bubble-classic-typing@2x.png"; sourceTree = "<group>"; };
 		A8C230F1717F4008B2BFAEA6 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		D8BD15081892E1C600FACA91 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		D8BD150B189810AD00FACA91 /* JSMessageWithImages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessageWithImages.h; sourceTree = "<group>"; };
+		D8BD150C189810AD00FACA91 /* JSMessageWithImages.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSMessageWithImages.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -292,6 +295,8 @@
 			children = (
 				88A3FB58182E079E00705327 /* JSAppDelegate.h */,
 				88A3FB59182E079E00705327 /* JSAppDelegate.m */,
+				D8BD150B189810AD00FACA91 /* JSMessageWithImages.h */,
+				D8BD150C189810AD00FACA91 /* JSMessageWithImages.m */,
 				88A3FB61182E079E00705327 /* JSDemoViewController.h */,
 				88A3FB62182E079E00705327 /* JSDemoViewController.m */,
 				88A3FB64182E079E00705327 /* Images.xcassets */,
@@ -735,6 +740,7 @@
 				88BA157A188F8FB900EDD5C0 /* JSMessageTableView.m in Sources */,
 				88A3FB56182E079E00705327 /* main.m in Sources */,
 				88A3FC5D182E0EA000705327 /* UIColor+JSMessagesView.m in Sources */,
+				D8BD150D189810AD00FACA91 /* JSMessageWithImages.m in Sources */,
 				88A3FB63182E079E00705327 /* JSDemoViewController.m in Sources */,
 				88A3FC6D182E0EA000705327 /* JSMessageInputView.m in Sources */,
 				88A3FC63182E0EA000705327 /* JSAvatarImageFactory.m in Sources */,

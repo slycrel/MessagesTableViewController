@@ -168,6 +168,10 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
                                     | UIViewAutoresizingFlexibleHeight
                                     | UIViewAutoresizingFlexibleBottomMargin);
     
+    if ([message respondsToSelector:@selector(mediaURL)] && [message mediaURL]) {
+        [bubbleView setMessageImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[message mediaURL]]]];
+    }
+    
     [self.contentView addSubview:bubbleView];
     [self.contentView sendSubviewToBack:bubbleView];
     _bubbleView = bubbleView;

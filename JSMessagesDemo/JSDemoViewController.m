@@ -14,6 +14,7 @@
 
 #import "JSDemoViewController.h"
 #import "NSString+JSMessagesView.h"
+#import "JSMessageWithImages.h"
 
 @import MobileCoreServices;
 
@@ -42,13 +43,16 @@
     
     [self setBackgroundColor:[UIColor whiteColor]];
     
+    JSMessageWithImages *imageMessage = [[JSMessageWithImages alloc] initWithText:@"Group chat. Sound effects and images included. Animations are smooth. Messages can be of arbitrary size!" sender:kSubtitleWoz date:[NSDate date]];
+    imageMessage.mediaURL = [NSURL URLWithString:@"http://3.bp.blogspot.com/-haL2aRqeJjs/UcOvPjG_PXI/AAAAAAAAAf8/FQ6NNvjqhKs/s1600/Screen+Shot+2013-06-20+at+7.40.44+PM.png"];
+    
     self.messages = [[NSMutableArray alloc] initWithObjects:
                      [[JSMessage alloc] initWithText:@"JSMessagesViewController is simple and easy to use." sender:kSubtitleJobs date:[NSDate distantPast]],
                      [[JSMessage alloc] initWithText:@"It's highly customizable." sender:kSubtitleWoz date:[NSDate distantPast]],
                      [[JSMessage alloc] initWithText:@"It even has data detectors. You can call me tonight. My cell number is 452-123-4567. \nMy website is www.hexedbits.com." sender:kSubtitleJobs date:[NSDate distantPast]],
                      [[JSMessage alloc] initWithText:@"Group chat. Sound effects and images included. Animations are smooth. Messages can be of arbitrary size!" sender:kSubtitleCook date:[NSDate distantPast]],
                      [[JSMessage alloc] initWithText:@"Group chat. Sound effects and images included. Animations are smooth. Messages can be of arbitrary size!" sender:kSubtitleJobs date:[NSDate date]],
-                     [[JSMessage alloc] initWithText:@"Group chat. Sound effects and images included. Animations are smooth. Messages can be of arbitrary size!" sender:kSubtitleWoz date:[NSDate date]],
+                     imageMessage,
                      nil];
     
     self.avatars = [[NSDictionary alloc] initWithObjectsAndKeys:
@@ -138,32 +142,32 @@
     [self scrollToBottomAnimated:YES];
 }
 
-- (id <JSMessageData>) attachedMediaMessage
-{
-    id <JSMessageData> userSelectedMediaMessage = nil;
-    UIImage* image = nil;
-    NSURL * moreInfoURL = [NSURL URLWithString:@"http://3.bp.blogspot.com/-haL2aRqeJjs/UcOvPjG_PXI/AAAAAAAAAf8/FQ6NNvjqhKs/s1600/Screen+Shot+2013-06-20+at+7.40.44+PM.png"];
-    
-    int random = (arc4random_uniform(100) % 3) + 1 ;
-    image = [UIImage imageNamed:[NSString stringWithFormat:@"test%d.png" , random]];
-    
-    NSString *randomSender = kSubtitleCook;
-    if (random == 2)
-        randomSender = kSubtitleJobs;
-    else if (random == 3)
-        randomSender = kSubtitleWoz;
-    
-    NSString *description = @"Description for Image";
-    random = (arc4random_uniform(100) % 2);
-    if (!random)
-        description = @"Description for Video";
-
-    userSelectedMediaMessage = [[JSMessage alloc] initWithText:description sender:randomSender date:[NSDate date]];
-
-#error you are here.  media message stuff should be set here.
-    
-    return userSelectedMediaMessage;
-}
+//- (id <JSMessageData>) attachedMediaMessage
+//{
+//    id <JSMessageData> userSelectedMediaMessage = nil;
+//    UIImage* image = nil;
+//    NSURL * moreInfoURL = [NSURL URLWithString:@"http://3.bp.blogspot.com/-haL2aRqeJjs/UcOvPjG_PXI/AAAAAAAAAf8/FQ6NNvjqhKs/s1600/Screen+Shot+2013-06-20+at+7.40.44+PM.png"];
+//    
+//    int random = (arc4random_uniform(100) % 3) + 1 ;
+//    image = [UIImage imageNamed:[NSString stringWithFormat:@"test%d.png" , random]];
+//    
+//    NSString *randomSender = kSubtitleCook;
+//    if (random == 2)
+//        randomSender = kSubtitleJobs;
+//    else if (random == 3)
+//        randomSender = kSubtitleWoz;
+//    
+//    NSString *description = @"Description for Image";
+//    random = (arc4random_uniform(100) % 2);
+//    if (!random)
+//        description = @"Description for Video";
+//
+//    userSelectedMediaMessage = [[JSMessage alloc] initWithText:description sender:randomSender date:[NSDate date]];
+//
+////#error you are here.  media message stuff should be set here.
+//  
+//    return userSelectedMediaMessage;
+//}
 
 - (JSBubbleMessageType)messageTypeForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -185,7 +189,7 @@
 
 - (JSMessageInputViewStyle)inputViewStyle
 {
-    return JSMessageInputViewStyleFlat | JSMessageInputViewStyleIncludesAdornment;
+  return JSMessageInputViewStyleFlat ;//| JSMessageInputViewStyleIncludesAdornment;
 }
 
 -(void) shouldViewImageAtIndexPath:(NSIndexPath*) indexPath
@@ -261,64 +265,64 @@
 
 #pragma mark - JSMessagesViewDelegate (optional)
 
-- (void)attachImagePressed
-{
-//#if TARGET_IPHONE_SIMULATOR
-//    // the simulator makes the UIImagePicker fairly useless.  Ideally this would bring up the image picker UI rather than hard-coding the image chosen.
-//    id<JSMessageData> message = [self attachedMediaMessage];
+//- (void)attachImagePressed
+//{
+////#if TARGET_IPHONE_SIMULATOR
+////    // the simulator makes the UIImagePicker fairly useless.  Ideally this would bring up the image picker UI rather than hard-coding the image chosen.
+////    id<JSMessageData> message = [self attachedMediaMessage];
+////    
+////    [self didSendText:[[message text] js_stringByTrimingWhitespace]
+////           fromSender:[message sender]
+////               onDate:[message date]];
+////#else
+//    // bring up the image picker and allow the user to choose an image.
+//    [self.view endEditing:YES];
 //    
-//    [self didSendText:[[message text] js_stringByTrimingWhitespace]
-//           fromSender:[message sender]
-//               onDate:[message date]];
-//#else
-    // bring up the image picker and allow the user to choose an image.
-    [self.view endEditing:YES];
-    
-    NSMutableArray *pickerChoices = [NSMutableArray array];    // reset the array
-    
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
-        [pickerChoices addObject:kPickerCameraOption];
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary])
-        [pickerChoices addObject:kPickerLibraryOption];
-    
-    if (pickerChoices.count)
-    {
-        NSString *choice1 = nil;
-        NSString *choice2 = nil;
-        
-        if (pickerChoices.count == 2)
-        {
-            choice1 = pickerChoices[0];
-            choice2 = pickerChoices[1];
-        }
-        else
-        {
-            choice1 = [pickerChoices firstObject];
-        }
-        
-        UIActionSheet *actionSheet = nil;
-        if (choice2)
-        {
-            actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                      delegate:self
-                                             cancelButtonTitle:kPickerOptionCancel
-                                        destructiveButtonTitle:nil
-                                             otherButtonTitles:choice1, choice2, nil];
-        }
-        else
-        {
-            actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                      delegate:self
-                                             cancelButtonTitle:kPickerOptionCancel
-                                        destructiveButtonTitle:nil
-                                             otherButtonTitles:choice1, nil];
-        }
-        
-        [actionSheet showInView:self.view];
-    }
-
-//#endif
-}
+//    NSMutableArray *pickerChoices = [NSMutableArray array];    // reset the array
+//    
+//    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+//        [pickerChoices addObject:kPickerCameraOption];
+//    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary])
+//        [pickerChoices addObject:kPickerLibraryOption];
+//    
+//    if (pickerChoices.count)
+//    {
+//        NSString *choice1 = nil;
+//        NSString *choice2 = nil;
+//        
+//        if (pickerChoices.count == 2)
+//        {
+//            choice1 = pickerChoices[0];
+//            choice2 = pickerChoices[1];
+//        }
+//        else
+//        {
+//            choice1 = [pickerChoices firstObject];
+//        }
+//        
+//        UIActionSheet *actionSheet = nil;
+//        if (choice2)
+//        {
+//            actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+//                                                      delegate:self
+//                                             cancelButtonTitle:kPickerOptionCancel
+//                                        destructiveButtonTitle:nil
+//                                             otherButtonTitles:choice1, choice2, nil];
+//        }
+//        else
+//        {
+//            actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+//                                                      delegate:self
+//                                             cancelButtonTitle:kPickerOptionCancel
+//                                        destructiveButtonTitle:nil
+//                                             otherButtonTitles:choice1, nil];
+//        }
+//        
+//        [actionSheet showInView:self.view];
+//    }
+//
+////#endif
+//}
 
 #pragma mark - Messages view data source: REQUIRED
 
