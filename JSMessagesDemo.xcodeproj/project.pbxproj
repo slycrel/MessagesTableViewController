@@ -218,6 +218,7 @@
 		88E43C801830147E0045E52D /* bubble-classic-typing.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bubble-classic-typing.png"; sourceTree = "<group>"; };
 		88E43C811830147E0045E52D /* bubble-classic-typing@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bubble-classic-typing@2x.png"; sourceTree = "<group>"; };
 		A8C230F1717F4008B2BFAEA6 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		D8BD15081892E1C600FACA91 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -275,6 +276,7 @@
 		88A3FB48182E079E00705327 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D8BD15081892E1C600FACA91 /* AVFoundation.framework */,
 				88A3FB4B182E079E00705327 /* CoreGraphics.framework */,
 				88A3FB49182E079E00705327 /* Foundation.framework */,
 				885BAC4D185421C8004DCD34 /* QuartzCore.framework */,

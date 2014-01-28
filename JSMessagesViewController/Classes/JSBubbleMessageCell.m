@@ -281,7 +281,7 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
     
     CGFloat subviewHeights = timestampHeight + subtitleHeight + kJSLabelPadding;
     
-    CGFloat bubbleHeight = [JSBubbleView neededHeightForText:[message text]];
+    CGFloat bubbleHeight = [JSBubbleView neededHeightForMessage:message];
     
     return subviewHeights + MAX(avatarHeight, bubbleHeight);
 }
@@ -314,7 +314,7 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
-    return (action == @selector(copy:));
+    return (action == @selector(copy:) && ![self.bubbleView isImageMessage]);
 }
 
 - (void)copy:(id)sender

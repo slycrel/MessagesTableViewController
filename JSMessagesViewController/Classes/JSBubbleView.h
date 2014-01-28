@@ -14,12 +14,15 @@
 
 #import <UIKit/UIKit.h>
 #import "JSBubbleImageViewFactory.h"
+#import "JSMessage.h"
 
 /**
  *  An instance of JSBubbleView is a means for displaying text in a speech bubble image to be placed in a JSBubbleMessageCell. 
  *  @see JSBubbleMessageCell.
  */
 @interface JSBubbleView : UIView
+
+@property (weak, nonatomic) JSMessage *message;
 
 /**
  *  Returns the message type for this bubble view.
@@ -38,6 +41,11 @@
  *  @warning You may customize the propeties of textView, however you *must not* change its `font` property directly. Please use the `JSBubbleView` font property instead.
  */
 @property (weak, nonatomic, readonly) UITextView *textView;
+
+/**
+ *  Returns the image view containing the attached image for this bubble view.
+ */
+@property (strong, nonatomic, readonly) UIImageView *attachedImageView;
 
 /**
  *  The font for the text contained in the bubble view. The default value is `[UIFont systemFontOfSize:16.0f]`.
@@ -62,6 +70,17 @@
                    bubbleType:(JSBubbleMessageType)bubleType
               bubbleImageView:(UIImageView *)bubbleImageView;
 
+
+#pragma mark - Setters
+
+
+/**
+ *  Sets a given Image for the bubble view, resizing its frame as needed.
+ *
+ *  @param image The message attached Image to be displayed in the bubble view.
+ */
+- (void)setMessageImage:(UIImage *)image;
+
 #pragma mark - Getters
 
 /**
@@ -80,6 +99,14 @@
  *
  *  @return The height required for the frame of the bubble view in order to display the given text.
  */
-+ (CGFloat)neededHeightForText:(NSString *)text;
++ (CGFloat)neededHeightForMessage:(id <JSMessageData>)message;
+
+/**
+ *  Asks the BubbleView for showing weather it contains attached Image or not.
+ *
+ *  @return A Bool.
+ */
+- (BOOL)isImageMessage;
 
 @end
+

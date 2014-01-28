@@ -14,9 +14,11 @@
 
 #import "JSMessagesViewController.h"
 
-@interface JSDemoViewController : JSMessagesViewController <JSMessagesViewDataSource, JSMessagesViewDelegate>
+@interface JSDemoViewController : JSMessagesViewController <JSMessagesViewDataSource, JSMessagesViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property (strong, nonatomic) NSMutableArray *messages;
 @property (strong, nonatomic) NSDictionary *avatars;
+
+- (id <JSMessageData>) attachedMediaMessage;
 
 @end

@@ -15,7 +15,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- *  The `JSMessageData` protocol defines the common interface through which `JSMessagesViewController` interacts with message model objects. 
+ *  The `JSMessageData` protocol defines the common interface through which `JSMessagesViewController` interacts with message model objects.
  *  It declares the methods that a class must implement so that instances of that class can be displayed properly by a `JSMessagesViewController`.
  */
 @protocol JSMessageData <NSObject>
@@ -23,7 +23,7 @@
 @required
 
 /**
- *  @return The body text of the message. 
+ *  @return The body text of the message.
  *  @warning This value must not be `nil`.
  */
 - (NSString *)text;
@@ -39,5 +39,11 @@
  *  @return The date that the message was sent.
  */
 - (NSDate *)date;
+
+/**
+ * @return The media URL for loading attached media content
+ */
+- (NSURL *)mediaURL;
+
 
 @end
