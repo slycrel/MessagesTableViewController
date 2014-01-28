@@ -171,6 +171,9 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
     if ([message respondsToSelector:@selector(mediaURL)] && [message mediaURL]) {
         [bubbleView setMessageImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[message mediaURL]]]];
     }
+    else {
+        [self.bubbleView removeMessageImage];
+    }
     
     [self.contentView addSubview:bubbleView];
     [self.contentView sendSubviewToBack:bubbleView];
@@ -252,11 +255,21 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 	self.subtitleLabel.text = subtitle;
 }
 
+- (void)setMediaURL:(NSURL *)mediaURL
+{
+    if (mediaURL)
+        [self.bubbleView setMessageImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:mediaURL]]];
+}
+
 - (void)setMessage:(id<JSMessageData>)message
 {
     [self setText:[message text]];
     [self setTimestamp:[message date]];
     [self setSubtitle:[message sender]];
+
+    [self.bubbleView removeMessageImage];
+    if ([message respondsToSelector:@selector(mediaURL)])
+        [self setMediaURL:[message mediaURL]];
 }
 
 - (void)setAvatarImageView:(UIImageView *)imageView

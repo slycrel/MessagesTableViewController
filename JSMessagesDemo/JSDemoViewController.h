@@ -19,6 +19,4 @@
 @property (strong, nonatomic) NSMutableArray *messages;
 @property (strong, nonatomic) NSDictionary *avatars;
 
-- (id <JSMessageData>) attachedMediaMessage;
-
 @end

@@ -111,6 +111,11 @@
     _bubbleImageView = nil;
     _textView = nil;
 
+    [self removeMessageImage];
+}
+
+- (void)removeMessageImage
+{
     [_attachedImageView removeFromSuperview];
     _attachedImageView = nil;
 }
@@ -161,8 +166,7 @@
 
 - (void)setMessageImage:(UIImage *)image
 {
-    [_attachedImageView removeFromSuperview];
-    _attachedImageView = nil;
+    [self removeMessageImage];
     
     if (image) {
         _attachedImageView = [[UIImageView alloc] initWithImage:image];

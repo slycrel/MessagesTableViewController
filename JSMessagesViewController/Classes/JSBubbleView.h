@@ -22,7 +22,7 @@
  */
 @interface JSBubbleView : UIView
 
-@property (weak, nonatomic) JSMessage *message;
+@property (weak, nonatomic) id <JSMessageData> message;
 
 /**
  *  Returns the message type for this bubble view.
@@ -80,6 +80,12 @@
  *  @param image The message attached Image to be displayed in the bubble view.
  */
 - (void)setMessageImage:(UIImage *)image;
+
+/**
+ *  Removes an image from the cell.
+ */
+- (void)removeMessageImage;
+
 
 #pragma mark - Getters
 
