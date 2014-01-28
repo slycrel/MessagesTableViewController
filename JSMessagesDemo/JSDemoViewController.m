@@ -25,6 +25,11 @@
 #define kPickerLibraryOption    @"Choose a photo"
 #define kPickerOptionCancel     @"Cancel"
 
+#define kSenderKey              @"Sender"
+#define KTextKey                @"Text"
+#define kDateKey                @"Date"
+#define kMediaURLKey            @"MediaURL"
+
 @implementation JSDemoViewController
 
 #pragma mark - View lifecycle
@@ -42,17 +47,14 @@
     self.sender = @"Jobs";
     
     [self setBackgroundColor:[UIColor whiteColor]];
-    
-    JSMessageWithImages *imageMessage = [[JSMessageWithImages alloc] initWithText:@"Group chat. Sound effects and images included. Animations are smooth. Messages can be of arbitrary size!" sender:kSubtitleWoz date:[NSDate date]];
-    imageMessage.mediaURL = [NSURL URLWithString:@"http://3.bp.blogspot.com/-haL2aRqeJjs/UcOvPjG_PXI/AAAAAAAAAf8/FQ6NNvjqhKs/s1600/Screen+Shot+2013-06-20+at+7.40.44+PM.png"];
-    
+        
     self.messages = [[NSMutableArray alloc] initWithObjects:
-                     [[JSMessage alloc] initWithText:@"JSMessagesViewController is simple and easy to use." sender:kSubtitleJobs date:[NSDate distantPast]],
-                     [[JSMessage alloc] initWithText:@"It's highly customizable." sender:kSubtitleWoz date:[NSDate distantPast]],
-                     [[JSMessage alloc] initWithText:@"It even has data detectors. You can call me tonight. My cell number is 452-123-4567. \nMy website is www.hexedbits.com." sender:kSubtitleJobs date:[NSDate distantPast]],
-                     [[JSMessage alloc] initWithText:@"Group chat. Sound effects and images included. Animations are smooth. Messages can be of arbitrary size!" sender:kSubtitleCook date:[NSDate distantPast]],
-                     [[JSMessage alloc] initWithText:@"Group chat. Sound effects and images included. Animations are smooth. Messages can be of arbitrary size!" sender:kSubtitleJobs date:[NSDate date]],
-                     imageMessage,
+                     @{kSenderKey: kSubtitleJobs, kDateKey:[NSDate distantPast], KTextKey:@"JSMessagesViewController is simple and easy to use."},
+                     @{kSenderKey: kSubtitleWoz, kDateKey:[NSDate distantPast], KTextKey:@"It's highly customizable."},
+                     @{kSenderKey: kSubtitleJobs, kDateKey:[NSDate distantPast], KTextKey:@"It even has data detectors. You can call me tonight. My cell number is 452-123-4567. \nMy website is www.hexedbits.com."},
+                     @{kSenderKey: kSubtitleCook, kDateKey:[NSDate distantPast], KTextKey:@"Group chat. Sound effects and images included. Animations are smooth. Messages can be of arbitrary size!"},
+                     @{kSenderKey: kSubtitleJobs, kDateKey:[NSDate date], KTextKey:@"Group chat. Sound effects and images included. Animations are smooth. Messages can be of arbitrary size!"},
+                     @{kSenderKey: kSubtitleWoz, kDateKey:[NSDate date], KTextKey:@"Image attachments are a great idea!", kMediaURLKey:[NSURL URLWithString:@"http://3.bp.blogspot.com/-haL2aRqeJjs/UcOvPjG_PXI/AAAAAAAAAf8/FQ6NNvjqhKs/s1600/Screen+Shot+2013-06-20+at+7.40.44+PM.png"]},
                      nil];
     
     self.avatars = [[NSDictionary alloc] initWithObjectsAndKeys:
@@ -222,7 +224,12 @@
 
 - (JSMessage *)messageForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [self.messages objectAtIndex:indexPath.row];
+    NSDictionary *dict = [self.messages objectAtIndex:indexPath.row];
+    NSURL *mediaURL = [dict objectForKey:kMediaURLKey];
+    if (mediaURL)
+        return [[JSMessageWithImages alloc] initWithText:[dict objectForKey:KTextKey] sender:[dict objectForKey:kSenderKey] date:[dict objectForKey:kDateKey] mediaURL:mediaURL];
+    
+    return [[JSMessage alloc] initWithText:[dict objectForKey:KTextKey] sender:[dict objectForKey:kSenderKey] date:[dict objectForKey:kDateKey]];
 }
 
 - (UIImageView *)avatarImageViewForRowAtIndexPath:(NSIndexPath *)indexPath sender:(NSString *)sender

@@ -268,7 +268,7 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
     [self setSubtitle:[message sender]];
 
     [self.bubbleView removeMessageImage];
-    if ([message respondsToSelector:@selector(mediaURL)])
+    if ([message respondsToSelector:@selector(mediaURL)] && [message mediaURL])
         [self setMediaURL:[message mediaURL]];
 }
 

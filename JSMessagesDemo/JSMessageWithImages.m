@@ -10,4 +10,15 @@
 
 @implementation JSMessageWithImages
 
+- (instancetype)initWithText:(NSString *)text sender:(NSString *)sender date:(NSDate *)date mediaURL:(NSURL *)mediaURL
+{
+    self = [super initWithText:text sender:sender date:date];
+    if (self)
+    {
+        self.mediaURL = mediaURL;
+    }
+    
+    return self;
+}
+
 @end
