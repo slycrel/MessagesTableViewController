@@ -35,7 +35,7 @@
 - (void)removeTextViewObservers;
 
 + (CGSize)textSizeForText:(NSString *)txt;
-+ (CGSize)bubbleSizeForImage:(UIImage *)image;
++ (CGSize)bubbleSizeForImageWithMessage:(id <JSMessageData>)message;
 
 @end
 
@@ -57,12 +57,14 @@
 - (instancetype)initWithFrame:(CGRect)frame
                    bubbleType:(JSBubbleMessageType)bubleType
               bubbleImageView:(UIImageView *)bubbleImageView
+                  messageData:(id <JSMessageData>)message
 {
     self = [super initWithFrame:frame];
     if (self) {
         [self setup];
         
         _type = bubleType;
+        _message = message;
         
         bubbleImageView.userInteractionEnabled = YES;
         [self addSubview:bubbleImageView];
@@ -164,17 +166,16 @@
 #pragma mark - Setters
 
 
-- (void)setMessageImage:(UIImage *)image
+- (void)setMessageImageViewWithMessage:(id<JSMessageData>)message
 {
     [self removeMessageImage];
     
-    if (image) {
-        _attachedImageView = [[UIImageView alloc] initWithImage:image];
-        CGSize imageFrameSize = [JSBubbleView bubbleSizeForImage:image];
-        _attachedImageView.frame = CGRectMake(_attachedImageView.frame.origin.x,
-                                              _attachedImageView.frame.origin.y,
-                                              imageFrameSize.width,
-                                              imageFrameSize.height);
+    UIImageView *imageView = nil;
+    if ([message respondsToSelector:@selector(thumbnailImageView)] && [message thumbnailImageView])
+        imageView = [message thumbnailImageView];
+
+    if (imageView) {
+        _attachedImageView = imageView;
         [self addSubview:_attachedImageView];
     }
     
@@ -212,12 +213,12 @@
 
 - (CGRect)bubbleFrame
 {
-    CGSize bubbleSize = [JSBubbleView bubbleSizeForText:self.textView.text withImage:self.attachedImageView.image];
+    CGSize bubbleSize = [JSBubbleView bubbleSizeForText:self.textView.text withMessage:self.message];
 
     return CGRectIntegral(CGRectMake((self.type == JSBubbleMessageTypeOutgoing ? self.frame.size.width - bubbleSize.width : 0.0f),
                                      kMarginTop,
                                      bubbleSize.width,
-                                     bubbleSize.height + kMarginTop));
+                                     bubbleSize.height + kMarginTop + self.attachedImageView.frame.size.height));
 }
 
 
@@ -233,7 +234,6 @@
     
     // If There is an image attached need to be displayed ..
     if (_attachedImageView) {
-        
         CGRect imageFrame = CGRectMake( self.bubbleImageView.frame.origin.x + imageSmallShift + round( (self.bubbleImageView.frame.size.width /2 ) - ( _attachedImageView.frame.size.width / 2.0 ) ),
                                        17,
                                        _attachedImageView.frame.size.width,
@@ -302,27 +302,35 @@
 }
 
 
-+ (CGSize)bubbleSizeForImage:(UIImage *)image
++ (CGSize)bubbleSizeForImageWithMessage:(id<JSMessageData>)message
 {
     CGSize imageSize = CGSizeZero;
-    if (image) {
+    UIImageView *imageView = nil;
+    if ([message respondsToSelector:@selector(thumbnailImageView)])
+        imageView = [message thumbnailImageView];
+    if (imageView.image) {
         
-        CGFloat maxWidth = [UIScreen mainScreen].applicationFrame.size.width * 0.70f;
-        CGSize actualImageSize = image.size;
-        if (actualImageSize.width > maxWidth )
-            imageSize = CGSizeMake(maxWidth, actualImageSize.height * maxWidth / actualImageSize.width);
-        else
+        CGFloat cellAvailableImageWidth = [UIScreen mainScreen].applicationFrame.size.width * 0.70f;
+        CGSize actualImageSize = imageView.image.size;
+        
+        // adjust smaller to fit as needed.
+        if (actualImageSize.width > cellAvailableImageWidth ) {
+            imageSize = CGSizeMake(cellAvailableImageWidth, actualImageSize.height * cellAvailableImageWidth / actualImageSize.width);
+            imageView.frame = CGRectMake(imageView.frame.origin.x, imageView.frame.origin.y, imageSize.width, imageSize.height);
+        }
+        else {
             imageSize = actualImageSize;
+        }
     }
     
     return imageSize;
 }
 
 
-+ (CGSize)bubbleSizeForText:(NSString *)text withImage:(UIImage *)image
++ (CGSize)bubbleSizeForText:(NSString *)text withMessage:(id <JSMessageData>)message
 {
     CGSize textSize = [self textSizeForText:text];
-    CGSize imageSize = [self bubbleSizeForImage:image];
+    CGSize imageSize = [self bubbleSizeForImageWithMessage:message];
     
     // Check If there is an image attached , or It is Just a regular text Message.
     CGSize bubbleSize = CGSizeMake( MAX(imageSize.width, textSize.width), round (imageSize.height + textSize.height));
@@ -334,14 +342,7 @@
 
 + (CGSize)bubbleSizeForMessage:(id <JSMessageData>)message
 {
-    // get the image as needed if the property exists on the object.
-    UIImage *image = nil;
-    SEL propertySelector = @selector(mediaURL);
-    objc_property_t property = class_getProperty([message class], [NSStringFromSelector(propertySelector) cStringUsingEncoding:NSUTF8StringEncoding]);
-    if (property && [message respondsToSelector:propertySelector])
-        image = [UIImage imageWithData:[NSData dataWithContentsOfURL:message.mediaURL]];
-
-    return [self bubbleSizeForText:message.text withImage:image];
+    return [self bubbleSizeForText:message.text withMessage:message];
 }
 
 

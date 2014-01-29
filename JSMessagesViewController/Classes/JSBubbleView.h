@@ -63,26 +63,29 @@
  *  @param frame           A rectangle specifying the initial location and size of the bubble view in its superview's coordinates.
  *  @param bubleType       A constant that specifies the type of the bubble view. @see JSBubbleMessageType.
  *  @param bubbleImageView An image view initialized with an image and highlighted image for this bubble view. @see JSBubbleImageViewFactory.
+ *  @param thumbnailSize   A set width/height for displaying image thumbnails.  Zero width/height means dynamic sizing.
  *
  *  @return An initialized `JSBubbleView` object or `nil` if the object could not be successfully initialized.
  */
 - (instancetype)initWithFrame:(CGRect)frame
                    bubbleType:(JSBubbleMessageType)bubleType
-              bubbleImageView:(UIImageView *)bubbleImageView;
+              bubbleImageView:(UIImageView *)bubbleImageView
+                  messageData:(id <JSMessageData>)message;
 
 
 #pragma mark - Setters
 
 
 /**
- *  Sets a given Image for the bubble view, resizing its frame as needed.
+ *  Sets a given custom image for the bubble view, resizing its frame as needed.
  *
- *  @param image The message attached Image to be displayed in the bubble view.
+ *  @param image The message attached image to be displayed in the bubble view.
+ *  @param message The message data which conforms to the JSMessageData protocol.
  */
-- (void)setMessageImage:(UIImage *)image;
+- (void)setMessageImageViewWithMessage:(id <JSMessageData>)message;
 
 /**
- *  Removes an image from the cell.
+ *  Removes a custom image view from the cell.
  */
 - (void)removeMessageImage;
 

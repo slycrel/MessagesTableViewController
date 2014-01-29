@@ -162,18 +162,14 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
     
     JSBubbleView *bubbleView = [[JSBubbleView alloc] initWithFrame:frame
                                                         bubbleType:type
-                                                   bubbleImageView:bubbleImageView];
+                                                   bubbleImageView:bubbleImageView
+                                                       messageData:message];
     
     bubbleView.autoresizingMask = (UIViewAutoresizingFlexibleWidth
                                     | UIViewAutoresizingFlexibleHeight
                                     | UIViewAutoresizingFlexibleBottomMargin);
     
-    if ([message respondsToSelector:@selector(mediaURL)] && [message mediaURL]) {
-        [bubbleView setMessageImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[message mediaURL]]]];
-    }
-    else {
-        [self.bubbleView removeMessageImage];
-    }
+    [bubbleView setMessageImageViewWithMessage:message];
     
     [self.contentView addSubview:bubbleView];
     [self.contentView sendSubviewToBack:bubbleView];
@@ -255,11 +251,6 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 	self.subtitleLabel.text = subtitle;
 }
 
-- (void)setMediaURL:(NSURL *)mediaURL
-{
-    if (mediaURL)
-        [self.bubbleView setMessageImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:mediaURL]]];
-}
 
 - (void)setMessage:(id<JSMessageData>)message
 {
@@ -267,9 +258,7 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
     [self setTimestamp:[message date]];
     [self setSubtitle:[message sender]];
 
-    [self.bubbleView removeMessageImage];
-    if ([message respondsToSelector:@selector(mediaURL)] && [message mediaURL])
-        [self setMediaURL:[message mediaURL]];
+    [self.bubbleView setMessageImageViewWithMessage:message];
 }
 
 - (void)setAvatarImageView:(UIImageView *)imageView

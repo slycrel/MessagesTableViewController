@@ -119,7 +119,13 @@
         sender = arc4random_uniform(10) % 2 ? kSubtitleCook : kSubtitleWoz;
     }
     
-    [self.messages addObject:[[JSMessage alloc] initWithText:text sender:sender date:date]];
+    // cover for optional params.
+    if (!sender)
+        sender = @"";
+    if (!date)
+        date = [NSDate date];
+    
+    [self.messages addObject:@{KTextKey: text, kSenderKey:sender, kDateKey:date}];
     
     [self finishSend];
     [self scrollToBottomAnimated:YES];
@@ -147,12 +153,6 @@
 - (JSMessageInputViewStyle)inputViewStyle
 {
     return JSMessageInputViewStyleFlat;
-}
-
--(void) shouldViewImageAtIndexPath:(NSIndexPath*) indexPath
-{
-    id<JSMessageData> imageMessage = [_messages objectAtIndex:indexPath.row];
-    NSLog(@"shouldView **  Image  ** AtIndexPath with Index %d and Link: %@", indexPath.row, [imageMessage mediaURL]);
 }
 
 - (BOOL)shouldDisplayTimestampForRowAtIndexPath:(NSIndexPath *)indexPath

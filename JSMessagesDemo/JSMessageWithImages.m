@@ -8,6 +8,9 @@
 
 #import "JSMessageWithImages.h"
 
+
+static NSMutableDictionary *mediaData;
+
 @implementation JSMessageWithImages
 
 - (instancetype)initWithText:(NSString *)text sender:(NSString *)sender date:(NSDate *)date mediaURL:(NSURL *)mediaURL
@@ -20,5 +23,33 @@
     
     return self;
 }
+
+
+// Implement to have a thumbnail view for a given message
+- (UIImageView *)thumbnailImageView
+{
+    // lazy init our storage
+    if (!mediaData)
+        mediaData = [NSMutableDictionary dictionary];
+    
+    // simple caching of media URL data.  This can, and likely should, be improved within your own app.
+    if (self.mediaURL)
+    {
+        UIImageView* imageView = [mediaData objectForKey:[self.mediaURL absoluteString]];
+        if (!imageView)
+        {
+            UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:self.mediaURL]];
+            imageView = [[UIImageView alloc] initWithImage:image];
+            imageView.contentMode = UIViewContentModeScaleToFill;
+            [mediaData setObject:imageView forKey:[self.mediaURL absoluteString]];
+        }
+        
+        if (imageView)
+            return imageView;
+    }
+    
+    return nil;
+}
+
 
 @end

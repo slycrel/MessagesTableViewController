@@ -14,5 +14,6 @@
 @property (strong, nonatomic) NSURL *mediaURL;
 
 - (instancetype)initWithText:(NSString *)text sender:(NSString *)sender date:(NSDate *)date mediaURL:(NSURL *)mediaURL;
+- (UIImageView *)thumbnailImageView;
 
 @end
