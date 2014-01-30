@@ -308,10 +308,10 @@
     UIImageView *imageView = nil;
     if ([message respondsToSelector:@selector(thumbnailImageView)])
         imageView = [message thumbnailImageView];
-    if (imageView.image) {
+    if (imageView.frame.size.height) {
         
         CGFloat cellAvailableImageWidth = [UIScreen mainScreen].applicationFrame.size.width * 0.70f;
-        CGSize actualImageSize = imageView.image.size;
+        CGSize actualImageSize = imageView.frame.size;
         
         // adjust smaller to fit as needed.
         if (actualImageSize.width > cellAvailableImageWidth ) {
