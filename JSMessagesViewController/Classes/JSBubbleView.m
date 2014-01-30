@@ -171,7 +171,7 @@
     [self removeMessageImage];
     
     UIImageView *imageView = nil;
-    if ([message respondsToSelector:@selector(thumbnailImageView)] && [message thumbnailImageView])
+    if ([message respondsToSelector:@selector(thumbnailImageView)])
         imageView = [message thumbnailImageView];
 
     if (imageView) {
@@ -218,7 +218,7 @@
     return CGRectIntegral(CGRectMake((self.type == JSBubbleMessageTypeOutgoing ? self.frame.size.width - bubbleSize.width : 0.0f),
                                      kMarginTop,
                                      bubbleSize.width,
-                                     bubbleSize.height + kMarginTop + self.attachedImageView.frame.size.height));
+                                     bubbleSize.height + kMarginTop));
 }
 
 
