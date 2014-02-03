@@ -125,7 +125,7 @@
     if (!date)
         date = [NSDate date];
     
-    [self.messages addObject:@{KTextKey: text, kSenderKey:sender, kDateKey:date}];
+    [self.messages addObject:[[JSMessage alloc] initWithText:text sender:sender date:date]];
     
     [self finishSend];
     [self scrollToBottomAnimated:YES];
