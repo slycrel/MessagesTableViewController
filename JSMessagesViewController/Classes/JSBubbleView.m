@@ -36,7 +36,7 @@
 - (void)removeTextViewObservers;
 
 + (CGSize)textSizeForText:(NSString *)txt;
-+ (CGSize)bubbleSizeForImageWithMessage:(id <JSMessageData>)message;
++ (CGSize)imageSizeForMessage:(id <JSMessageData>)message;
 
 @end
 
@@ -225,6 +225,12 @@
 - (CGRect)bubbleFrame
 {
     CGSize bubbleSize = [JSBubbleView bubbleSizeForText:self.textView.text withMessage:self.message];
+    CGSize imageSize = [JSBubbleView imageSizeForMessage:self.message];
+
+    if ([self.message respondsToSelector:@selector(inlineThumbnailImage)] && ![self.message inlineThumbnailImage] && imageSize.height) {
+        if (imageSize.height < bubbleSize.height || imageSize.width < bubbleSize.width)
+            bubbleSize = imageSize;
+    }
 
     return CGRectIntegral(CGRectMake((self.type == JSBubbleMessageTypeOutgoing ? self.frame.size.width - bubbleSize.width : 0.0f),
                                      kMarginTop,
@@ -243,7 +249,7 @@
     int imageSmallShift = (self.type == JSBubbleMessageTypeIncoming) ? 3 : -3;
     int imageHeightForDescription = 3.0f;
     
-    // If There is an image attached need to be displayed ..
+    // if There is an inline image attached that needs to be displayed, tweak the frame
     if (_attachedImageView) {
         if ([self.message respondsToSelector:@selector(inlineThumbnailImage)] && [self.message inlineThumbnailImage]) {
             CGRect imageFrame = CGRectMake( self.bubbleImageView.frame.origin.x + imageSmallShift + round( (self.bubbleImageView.frame.size.width /2 ) - ( _attachedImageView.frame.size.width / 2.0 ) ),
@@ -261,8 +267,6 @@
         }
         
         imageHeightForDescription = _attachedImageView.frame.size.height + 5;
-        
-        [self addSubview:_attachedImageView];
     }
     
     CGFloat textX = self.bubbleImageView.frame.origin.x;
@@ -323,7 +327,7 @@
 }
 
 
-+ (CGSize)bubbleSizeForImageWithMessage:(id<JSMessageData>)message
++ (CGSize)imageSizeForMessage:(id<JSMessageData>)message
 {
     CGSize imageSize = CGSizeZero;
     UIImageView *imageView = nil;
@@ -351,7 +355,7 @@
 + (CGSize)bubbleSizeForText:(NSString *)text withMessage:(id <JSMessageData>)message
 {
     CGSize textSize = [self textSizeForText:text];
-    CGSize imageSize = [self bubbleSizeForImageWithMessage:message];
+    CGSize imageSize = [self imageSizeForMessage:message];
     
     // if we are sending an image that fills the chat bubble, ignore any message text
     BOOL responds = [message respondsToSelector:@selector(inlineThumbnailImage)];
