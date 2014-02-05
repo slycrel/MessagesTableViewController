@@ -15,5 +15,6 @@
 
 - (instancetype)initWithText:(NSString *)text sender:(NSString *)sender date:(NSDate *)date mediaURL:(NSURL *)mediaURL;
 - (UIImageView *)thumbnailImageView;
+- (BOOL)inlineThumbnailImage;
 
 @end

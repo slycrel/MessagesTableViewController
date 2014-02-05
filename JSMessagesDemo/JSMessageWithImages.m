@@ -7,6 +7,7 @@
 //
 
 #import "JSMessageWithImages.h"
+#import "JSDemoViewController.h"    // for #define constants
 
 
 static NSMutableDictionary *mediaData;
@@ -49,6 +50,15 @@ static NSMutableDictionary *mediaData;
     }
     
     return nil;
+}
+
+
+- (BOOL)inlineThumbnailImage
+{
+    if ([self.sender isEqualToString:kSubtitleWoz])
+        return YES;
+
+    return NO;
 }
 
 

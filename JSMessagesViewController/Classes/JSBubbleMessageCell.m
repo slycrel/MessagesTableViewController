@@ -168,9 +168,7 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
     bubbleView.autoresizingMask = (UIViewAutoresizingFlexibleWidth
                                     | UIViewAutoresizingFlexibleHeight
                                     | UIViewAutoresizingFlexibleBottomMargin);
-    
-    [bubbleView setMessageImageViewWithMessage:message];
-    
+        
     [self.contentView addSubview:bubbleView];
     [self.contentView sendSubviewToBack:bubbleView];
     _bubbleView = bubbleView;
@@ -254,7 +252,9 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 
 - (void)setMessage:(id<JSMessageData>)message
 {
-    [self setText:[message text]];
+    BOOL responds = [message respondsToSelector:@selector(inlineThumbnailImage)];
+    if (!responds || (responds && [message inlineThumbnailImage]))
+        [self setText:[message text]];
     [self setTimestamp:[message date]];
     [self setSubtitle:[message sender]];
 

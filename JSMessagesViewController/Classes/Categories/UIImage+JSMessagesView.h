@@ -60,4 +60,13 @@
  */
 - (UIImage *)js_imageMaskWithColor:(UIColor *)maskColor;
 
+/**
+ *  Creates and returns a new image object that is masked with the specified image view.
+ *
+ *  @param imageView The imageView used to determine the mask
+ *
+ *  @return A new image object masked with the passed image view.
+ */
+- (UIImage *)js_imageMaskWithImageView:(UIImageView *)imageView;
+
 @end

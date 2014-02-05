@@ -88,6 +88,33 @@
     return newImage;
 }
 
+- (UIImage *)js_imageMaskWithImageView:(UIImageView *)maskImageView
+{
+    // get the mask from the likely manipulated image via the UIImageView
+    UIGraphicsBeginImageContextWithOptions(maskImageView.frame.size, YES, [UIScreen mainScreen].scale);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    [maskImageView.layer renderInContext:context];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    // use the mask built above to get our resulting image
+    CGRect imageRect = CGRectMake(0.0f, 0.0f, self.size.width, self.size.height);
+    
+    UIGraphicsBeginImageContextWithOptions(imageRect.size, NO, self.scale);
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
+    
+    CGContextScaleCTM(ctx, 1.0f, -1.0f);
+    CGContextTranslateCTM(ctx, 0.0f, -(imageRect.size.height));
+    
+    CGContextClipToMask(ctx, imageRect, image.CGImage);
+    CGContextDrawImage(ctx, imageRect, self.CGImage);
+
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return newImage;
+}
+
 - (UIImage *)js_imageMaskWithColor:(UIColor *)maskColor
 {
     CGRect imageRect = CGRectMake(0.0f, 0.0f, self.size.width, self.size.height);

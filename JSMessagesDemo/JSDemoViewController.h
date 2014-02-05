@@ -20,3 +20,8 @@
 @property (strong, nonatomic) NSDictionary *avatars;
 
 @end
+
+#define kSubtitleJobs           @"Jobs"
+#define kSubtitleWoz            @"Steve Wozniak"
+#define kSubtitleCook           @"Mr. Cook"
+

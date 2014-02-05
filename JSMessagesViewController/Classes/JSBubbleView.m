@@ -17,6 +17,7 @@
 #import "JSMessageInputView.h"
 #import "JSAvatarImageFactory.h"
 #import "NSString+JSMessagesView.h"
+#import "UIImage+JSMessagesView.h"
 #import <objc/runtime.h>
 
 #define kMarginTop 8.0f
@@ -94,7 +95,7 @@
         [self addTextViewObservers];
         
         _attachedImageView = nil;
-
+        
 //        NOTE: TODO: textView frame & text inset
 //        --------------------
 //        future implementation for textView frame
@@ -169,16 +170,26 @@
 - (void)setMessageImageViewWithMessage:(id<JSMessageData>)message
 {
     [self removeMessageImage];
+    _bubbleImageView.hidden = NO;
     
     UIImageView *imageView = nil;
     if ([message respondsToSelector:@selector(thumbnailImageView)])
         imageView = [message thumbnailImageView];
 
     if (imageView) {
-        _attachedImageView = imageView;
+        // inline or mask the image to the full cell
+        if ([message respondsToSelector:@selector(inlineThumbnailImage)] && [message inlineThumbnailImage]) {
+            _attachedImageView = imageView;
+        }
+        else {
+            _bubbleImageView.frame = [self bubbleFrame];    // this needs to be updated here or the mask is incorrect.
+            UIImage *image = [imageView.image js_imageMaskWithImageView:_bubbleImageView];
+            _attachedImageView = [[UIImageView alloc] initWithImage:image];
+            _bubbleImageView.hidden = YES;
+        }
+
         [self addSubview:_attachedImageView];
     }
-    
 }
 
 
@@ -234,14 +245,20 @@
     
     // If There is an image attached need to be displayed ..
     if (_attachedImageView) {
-        CGRect imageFrame = CGRectMake( self.bubbleImageView.frame.origin.x + imageSmallShift + round( (self.bubbleImageView.frame.size.width /2 ) - ( _attachedImageView.frame.size.width / 2.0 ) ),
-                                       17,
-                                       _attachedImageView.frame.size.width,
-                                       _attachedImageView.frame.size.height);
-        
-        self.attachedImageView.frame = imageFrame;
-        // Set rounded Corners for Image Message View
-        [self setMaskTo:_attachedImageView byRoundingCorners:UIRectCornerAllCorners ];
+        if ([self.message respondsToSelector:@selector(inlineThumbnailImage)] && [self.message inlineThumbnailImage]) {
+            CGRect imageFrame = CGRectMake( self.bubbleImageView.frame.origin.x + imageSmallShift + round( (self.bubbleImageView.frame.size.width /2 ) - ( _attachedImageView.frame.size.width / 2.0 ) ),
+                                           17,
+                                           _attachedImageView.frame.size.width,
+                                           _attachedImageView.frame.size.height);
+            
+            self.attachedImageView.frame = imageFrame;
+
+            // Set rounded Corners for Image Message View
+            [self setMaskTo:_attachedImageView byRoundingCorners:UIRectCornerAllCorners ];
+        }
+        else {
+            self.attachedImageView.frame = self.bubbleImageView.frame;
+        }
         
         imageHeightForDescription = _attachedImageView.frame.size.height + 5;
         
@@ -284,7 +301,11 @@
     maxHeight += kJSAvatarImageSize;
     
     CGSize stringSize;
-    
+
+    // check for blank messages, and return a 0 text height for those.
+    if (![text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length)
+      return CGSizeZero;
+
     if (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_0) {
         CGRect stringRect = [text boundingRectWithSize:CGSizeMake(maxWidth, maxHeight)
                                               options:NSStringDrawingUsesLineFragmentOrigin
@@ -331,6 +352,13 @@
 {
     CGSize textSize = [self textSizeForText:text];
     CGSize imageSize = [self bubbleSizeForImageWithMessage:message];
+    
+    // if we are sending an image that fills the chat bubble, ignore any message text
+    BOOL responds = [message respondsToSelector:@selector(inlineThumbnailImage)];
+    BOOL imageFilledBubble = !responds || (responds && ![message inlineThumbnailImage]);
+    
+    if (imageSize.height > 0 && imageFilledBubble)
+        textSize = CGSizeZero;
     
     // Check If there is an image attached , or It is Just a regular text Message.
     CGSize bubbleSize = CGSizeMake( MAX(imageSize.width, textSize.width), round (imageSize.height + textSize.height));

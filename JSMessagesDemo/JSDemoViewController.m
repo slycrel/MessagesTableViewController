@@ -18,9 +18,6 @@
 
 @import MobileCoreServices;
 
-#define kSubtitleJobs           @"Jobs"
-#define kSubtitleWoz            @"Steve Wozniak"
-#define kSubtitleCook           @"Mr. Cook"
 #define kPickerCameraOption     @"Take Photo or Video"
 #define kPickerLibraryOption    @"Choose a photo"
 #define kPickerOptionCancel     @"Cancel"
@@ -54,7 +51,10 @@
                      [[JSMessage alloc] initWithText:@"It even has data detectors. You can call me tonight. My cell number is 452-123-4567. \nMy website is www.hexedbits.com." sender:kSubtitleJobs date:[NSDate distantPast]],
                      [[JSMessage alloc] initWithText:@"Group chat. Sound effects and images included. Animations are smooth. Messages can be of arbitrary size!" sender:kSubtitleCook date:[NSDate distantPast]],
                      [[JSMessage alloc] initWithText:@"Group chat. Sound effects and images included. Animations are smooth. Messages can be of arbitrary size!" sender:kSubtitleJobs date:[NSDate distantPast]],
-                     [[JSMessageWithImages alloc] initWithText:@"Image attachments are a great idea!" sender:kSubtitleWoz date:[NSDate date] mediaURL:[NSURL URLWithString:@"http://3.bp.blogspot.com/-haL2aRqeJjs/UcOvPjG_PXI/AAAAAAAAAf8/FQ6NNvjqhKs/s1600/Screen+Shot+2013-06-20+at+7.40.44+PM.png"]],
+                     [[JSMessageWithImages alloc] initWithText:@"This is a large fish." sender:kSubtitleWoz date:[NSDate date] mediaURL:[NSURL URLWithString:@"http://newswatch.nationalgeographic.com/files/2012/11/Blue-Marlin-Crittercam-600x423.jpg"]],
+                     [[JSMessageWithImages alloc] initWithText:@"That is a large fish!" sender:kSubtitleCook date:[NSDate date] mediaURL:[NSURL URLWithString:@"http://newswatch.nationalgeographic.com/files/2012/11/Black-Jump-Sequence-2e-950x633.jpg"]],
+                     [[JSMessageWithImages alloc] initWithText:@"Small flower." sender:kSubtitleWoz date:[NSDate date] mediaURL:[NSURL URLWithString:@"http://www.birdmom.net/WildflowersBlue/Blue-Dick3-18-05(small).jpg"]],
+                     [[JSMessageWithImages alloc] initWithText:@"I like small flowers." sender:kSubtitleCook date:[NSDate date] mediaURL:[NSURL URLWithString:@"http://www.birdmom.net/WildflowersBlue/Blue-Dick3-18-05(small).jpg"]],
                      nil];
     
     self.avatars = [[NSDictionary alloc] initWithObjectsAndKeys:
@@ -108,6 +108,7 @@
 
 #pragma mark - Messages view delegate: REQUIRED
 
+
 - (void)didSendText:(NSString *)text fromSender:(NSString *)sender onDate:(NSDate *)date
 {
     if ((self.messages.count - 1) % 2) {
@@ -140,6 +141,17 @@
 - (UIImageView *)bubbleImageViewWithType:(JSBubbleMessageType)type
                        forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    // when the bubble thumbnail image is not inline, the image view returned here is used as a mask for the chat bubble.
+    // this is the currently expected default behavior.
+    id <JSMessageData> message = [self messageForRowAtIndexPath:indexPath];
+    BOOL hasThumbs = [message respondsToSelector:@selector(thumbnailImageView)];
+    BOOL inlineImages = [message respondsToSelector:@selector(inlineThumbnailImage)] && [message inlineThumbnailImage];
+    if (hasThumbs && !inlineImages) {
+        // white is full alpha, greys are partial alpha, black is alpha of 0.
+        return [JSBubbleImageViewFactory bubbleImageViewForType:type
+                                                          color:[UIColor whiteColor]];
+    }
+
     if (indexPath.row % 2) {
         return [JSBubbleImageViewFactory bubbleImageViewForType:type
                                                           color:[UIColor js_bubbleLightGrayColor]];
