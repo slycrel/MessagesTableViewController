@@ -238,7 +238,15 @@
     }
 
     if (!CellIdentifier) {
-        CellIdentifier = [NSString stringWithFormat:@"JSMessageCell_%d_%d_%d_%d", (int)type, displayTimestamp, avatar != nil, [message sender] != nil];
+        int imageCell = 0;
+        unsigned long imageNum = 0;
+        if ([message respondsToSelector:@selector(thumbnailImageView)] && [message thumbnailImageView]) {
+            imageNum = [[message thumbnailImageView] hash];
+        }
+        if (!([message respondsToSelector:@selector(inlineThumbnailImage)] && [message inlineThumbnailImage])) {
+            imageCell = 1;
+        }
+        CellIdentifier = [NSString stringWithFormat:@"JSMessageCell_%d_%d_%d_%d_%d_%lu", (int)type, displayTimestamp, avatar != nil, [message sender] != nil, imageCell, imageNum];
     }
     
     JSBubbleMessageCell *cell = (JSBubbleMessageCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -255,7 +263,7 @@
     [cell setMessage:message];
     [cell setAvatarImageView:avatar];
     [cell setBackgroundColor:tableView.backgroundColor];
-    
+  
 	#if TARGET_IPHONE_SIMULATOR
         cell.bubbleView.textView.dataDetectorTypes = UIDataDetectorTypeNone;
 	#else
