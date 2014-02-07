@@ -71,6 +71,20 @@ typedef NS_ENUM(NSUInteger, JSBubbleImageViewStyle) {
                                   color:(UIColor *)color;
 
 /**
+ *  Creates and returns an image view object with the specified type and color. The `image` property of the image view is configured with the image named filename, masked with the given color. The `highlightedImage` property is configured similarly, but with a slightly darkened version of the given color.
+ *
+ *  @param type  The type of the bubble image view.
+ *  @param color The color of the bubble image in the image view.
+ *  @param filename The filename of the image to be loaded and used as the image mask for the passed color.
+ *
+ *  @return An initialized image view object if created successfully, `nil` otherwise.
+ */
++ (UIImageView *)bubbleImageViewForType:(JSBubbleMessageType)type
+                                  color:(UIColor *)color
+                               filename:(NSString *)filename;
+
+
+/**
  *  Creates and returns an image view object with the specified type and style. The `image` property of the image view is configured with a glossy, iOS6-style bubble image, corresponding to the given style. The `highlightedImage` property is configured similarly, but with a selected version of the bubble image.
  *
  *  @param type  The type of the bubble image view.
