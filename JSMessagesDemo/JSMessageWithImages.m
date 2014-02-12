@@ -46,19 +46,14 @@ static NSMutableDictionary *mediaData;
         }
         
         if (imageView)
+        {
+            if (self.callback)
+                self.callback(self.parentController, imageView);
             return imageView;
+        }
     }
     
     return nil;
-}
-
-
-- (BOOL)inlineThumbnailImage
-{
-    if ([self.sender isEqualToString:kSubtitleWoz])
-        return YES;
-
-    return NO;
 }
 
 

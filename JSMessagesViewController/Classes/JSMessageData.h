@@ -45,9 +45,5 @@
  */
 - (UIImageView *)thumbnailImageView;
 
-/**
- * @return Return YES if the thumbnail image should be within the normal chat bubble (and also allow inline text beside it).  Default is NO, the image will fill the chat bubble area.
- */
-- (BOOL)inlineThumbnailImage;
 
 @end

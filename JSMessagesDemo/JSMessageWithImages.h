@@ -9,12 +9,18 @@
 #import <UIKit/UIKit.h>
 #import "JSMessage.h"
 
+@class JSDemoViewController;
+
+typedef void(^JSMessageWithImagesCachedImageCallback)(JSDemoViewController *controller, UIImageView* imageView);
+
+
 @interface JSMessageWithImages : JSMessage <JSMessageData>
 
 @property (strong, nonatomic) NSURL *mediaURL;
+@property (strong, nonatomic) JSMessageWithImagesCachedImageCallback callback;
+@property (strong, nonatomic) JSDemoViewController *parentController;
 
 - (instancetype)initWithText:(NSString *)text sender:(NSString *)sender date:(NSDate *)date mediaURL:(NSURL *)mediaURL;
 - (UIImageView *)thumbnailImageView;
-- (BOOL)inlineThumbnailImage;
 
 @end

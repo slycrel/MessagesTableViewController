@@ -177,16 +177,11 @@
         imageView = [message thumbnailImageView];
 
     if (imageView) {
-        // inline or mask the image to the full cell
-        if ([message respondsToSelector:@selector(inlineThumbnailImage)] && [message inlineThumbnailImage]) {
-            _attachedImageView = imageView;
-        }
-        else {
-            _bubbleImageView.frame = [self bubbleFrame];    // this needs to be updated here or the mask is incorrect.
-            UIImage *image = [imageView.image js_imageMaskWithImageView:_bubbleImageView];
-            _attachedImageView = [[UIImageView alloc] initWithImage:image];
-            _bubbleImageView.hidden = YES;
-        }
+        UIImageView *maskView = [JSBubbleImageViewFactory bubbleImageViewForType:self.type color:[UIColor whiteColor]];
+        maskView.frame = [self bubbleFrame];
+        UIImage *image = [imageView.image js_imageMaskWithImageView:maskView];
+        _attachedImageView = [[UIImageView alloc] initWithImage:image];
+        _bubbleImageView.hidden = YES;
 
         [self addSubview:_attachedImageView];
     }
@@ -226,16 +221,15 @@
 {
     CGSize bubbleSize = [JSBubbleView bubbleSizeForText:self.textView.text withMessage:self.message];
     CGSize imageSize = [JSBubbleView imageSizeForMessage:self.message];
+    NSInteger heightMargin = kMarginTop;
 
-    if ([self.message respondsToSelector:@selector(inlineThumbnailImage)] && ![self.message inlineThumbnailImage] && imageSize.height) {
-        if (imageSize.height < bubbleSize.height || imageSize.width < bubbleSize.width)
-            bubbleSize = imageSize;
-    }
+    if (imageSize.height)
+        heightMargin = 0;
 
     return CGRectIntegral(CGRectMake((self.type == JSBubbleMessageTypeOutgoing ? self.frame.size.width - bubbleSize.width : 0.0f),
                                      kMarginTop,
                                      bubbleSize.width,
-                                     bubbleSize.height + kMarginTop));
+                                     bubbleSize.height + heightMargin));
 }
 
 
@@ -246,27 +240,12 @@
     [super layoutSubviews];
     
     self.bubbleImageView.frame = [self bubbleFrame];
-    int imageSmallShift = (self.type == JSBubbleMessageTypeIncoming) ? 3 : -3;
-    int imageHeightForDescription = 3.0f;
+    int imageHeightForDescription = 0;
     
-    // if There is an inline image attached that needs to be displayed, tweak the frame
     if (_attachedImageView) {
-        if ([self.message respondsToSelector:@selector(inlineThumbnailImage)] && [self.message inlineThumbnailImage]) {
-            CGRect imageFrame = CGRectMake( self.bubbleImageView.frame.origin.x + imageSmallShift + round( (self.bubbleImageView.frame.size.width /2 ) - ( _attachedImageView.frame.size.width / 2.0 ) ),
-                                           17,
-                                           _attachedImageView.frame.size.width,
-                                           _attachedImageView.frame.size.height);
-            
-            self.attachedImageView.frame = imageFrame;
-
-            // Set rounded Corners for Image Message View
-            [self setMaskTo:_attachedImageView byRoundingCorners:UIRectCornerAllCorners ];
-        }
-        else {
-            self.attachedImageView.frame = self.bubbleImageView.frame;
-        }
+        self.attachedImageView.frame = self.bubbleImageView.frame;
         
-        imageHeightForDescription = _attachedImageView.frame.size.height + 5;
+        imageHeightForDescription = _attachedImageView.frame.size.height;
     }
     
     CGFloat textX = self.bubbleImageView.frame.origin.x;
@@ -358,11 +337,10 @@
     CGSize imageSize = [self imageSizeForMessage:message];
     
     // if we are sending an image that fills the chat bubble, ignore any message text
-    BOOL responds = [message respondsToSelector:@selector(inlineThumbnailImage)];
-    BOOL imageFilledBubble = !responds || (responds && ![message inlineThumbnailImage]);
-    
-    if (imageSize.height > 0 && imageFilledBubble)
+    if (imageSize.height > 0) {
         textSize = CGSizeZero;
+        return CGSizeMake(round(imageSize.width), round(imageSize.height));
+    }
     
     // Check If there is an image attached , or It is Just a regular text Message.
     CGSize bubbleSize = CGSizeMake( MAX(imageSize.width, textSize.width), round (imageSize.height + textSize.height));

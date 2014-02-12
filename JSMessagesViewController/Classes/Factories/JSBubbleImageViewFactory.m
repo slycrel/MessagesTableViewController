@@ -54,27 +54,6 @@ static NSDictionary *bubbleImageDictionary;
 
 + (UIImageView *)bubbleImageViewForType:(JSBubbleMessageType)type
                                   color:(UIColor *)color
-                               filename:(NSString *)filename
-{
-  UIImage *bubble = [UIImage imageNamed:filename];
-  UIImage *normalBubble = [bubble js_imageMaskWithColor:color];
-  UIImage *highlightedBubble = [bubble js_imageMaskWithColor:[color js_darkenColorWithValue:0.12f]];
-  
-  if (type == JSBubbleMessageTypeIncoming) {
-    normalBubble = [normalBubble js_imageFlippedHorizontal];
-    highlightedBubble = [highlightedBubble js_imageFlippedHorizontal];
-  }
-  
-  // make image stretchable from center point
-  CGPoint center = CGPointMake(bubble.size.width / 2.0f, bubble.size.height / 2.0f);
-  UIEdgeInsets capInsets = UIEdgeInsetsMake(center.y, center.x, center.y, center.x);
-  
-  return [[UIImageView alloc] initWithImage:[normalBubble js_stretchableImageWithCapInsets:capInsets]
-                           highlightedImage:[highlightedBubble js_stretchableImageWithCapInsets:capInsets]];
-}
-
-+ (UIImageView *)bubbleImageViewForType:(JSBubbleMessageType)type
-                                  color:(UIColor *)color
 {
     return [self bubbleImageViewForType:type color:color filename:@"bubble-min"];
 }
@@ -87,6 +66,27 @@ static NSDictionary *bubbleImageDictionary;
 }
 
 #pragma mark - Private
+
++ (UIImageView *)bubbleImageViewForType:(JSBubbleMessageType)type
+                                  color:(UIColor *)color
+                               filename:(NSString *)filename
+{
+    UIImage *bubble = [UIImage imageNamed:filename];
+    UIImage *normalBubble = [bubble js_imageMaskWithColor:color];
+    UIImage *highlightedBubble = [bubble js_imageMaskWithColor:[color js_darkenColorWithValue:0.12f]];
+    
+    if (type == JSBubbleMessageTypeIncoming) {
+        normalBubble = [normalBubble js_imageFlippedHorizontal];
+        highlightedBubble = [highlightedBubble js_imageFlippedHorizontal];
+    }
+    
+    // make image stretchable from center point
+    CGPoint center = CGPointMake(bubble.size.width / 2.0f, bubble.size.height / 2.0f);
+    UIEdgeInsets capInsets = UIEdgeInsetsMake(center.y, center.x, center.y, center.x);
+    
+    return [[UIImageView alloc] initWithImage:[normalBubble js_stretchableImageWithCapInsets:capInsets]
+                             highlightedImage:[highlightedBubble js_stretchableImageWithCapInsets:capInsets]];
+}
 
 + (UIImageView *)classicBubbleImageViewForStyle:(JSBubbleImageViewStyle)style
                                      isOutgoing:(BOOL)isOutgoing

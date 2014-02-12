@@ -252,9 +252,11 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 
 - (void)setMessage:(id<JSMessageData>)message
 {
-    BOOL responds = [message respondsToSelector:@selector(inlineThumbnailImage)];
-    BOOL hasImage = [message respondsToSelector:@selector(thumbnailImageView)] && [message thumbnailImageView];
-    if ((responds && [message inlineThumbnailImage]) || !hasImage)
+    BOOL thumbImage = NO;
+    if ([message respondsToSelector:@selector(thumbnailImageView)])
+        thumbImage = [message thumbnailImageView] != nil;
+
+    if (!thumbImage)        // ignore the text in an image context.
         [self setText:[message text]];
     [self setTimestamp:[message date]];
     [self setSubtitle:[message sender]];

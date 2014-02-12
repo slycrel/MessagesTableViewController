@@ -144,13 +144,8 @@
     // when the bubble thumbnail image is not inline, the image view returned here is used as a mask for the chat bubble.
     // this is the currently expected default behavior.
     id <JSMessageData> message = [self messageForRowAtIndexPath:indexPath];
-    BOOL hasThumbs = [message respondsToSelector:@selector(thumbnailImageView)];
-    BOOL inlineImages = [message respondsToSelector:@selector(inlineThumbnailImage)] && [message inlineThumbnailImage];
-    if (hasThumbs && !inlineImages) {
-        // white is full alpha, greys are partial alpha, black is alpha of 0.
-        return [JSBubbleImageViewFactory bubbleImageViewForType:type
-                                                          color:[UIColor whiteColor]];
-    }
+    if ([message respondsToSelector:@selector(thumbnailImageView)])
+        return [message thumbnailImageView];
 
     if (indexPath.row % 2) {
         return [JSBubbleImageViewFactory bubbleImageViewForType:type
