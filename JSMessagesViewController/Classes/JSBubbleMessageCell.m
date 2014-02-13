@@ -13,7 +13,7 @@
 //
 
 #import "JSBubbleMessageCell.h"
-
+#import "JSMessagesViewController.h"
 #import "JSAvatarImageFactory.h"
 #import "UIColor+JSMessagesView.h"
 
@@ -32,6 +32,7 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 - (void)configureWithType:(JSBubbleMessageType)type
           bubbleImageView:(UIImageView *)bubbleImageView
                   message:(id<JSMessageData>)message
+         parentController:(JSMessagesViewController *)parentController
         displaysTimestamp:(BOOL)displaysTimestamp
                    avatar:(BOOL)hasAvatar;
 
@@ -128,6 +129,7 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 - (void)configureWithType:(JSBubbleMessageType)type
           bubbleImageView:(UIImageView *)bubbleImageView
                   message:(id<JSMessageData>)message
+         parentController:(JSMessagesViewController *)parentController
          displaysTimestamp:(BOOL)displaysTimestamp
                    avatar:(BOOL)hasAvatar
 {
@@ -163,7 +165,8 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
     JSBubbleView *bubbleView = [[JSBubbleView alloc] initWithFrame:frame
                                                         bubbleType:type
                                                    bubbleImageView:bubbleImageView
-                                                       messageData:message];
+                                                       messageData:message
+                                                  parentController:parentController];
     
     bubbleView.autoresizingMask = (UIViewAutoresizingFlexibleWidth
                                     | UIViewAutoresizingFlexibleHeight
@@ -188,6 +191,7 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 - (instancetype)initWithBubbleType:(JSBubbleMessageType)type
                    bubbleImageView:(UIImageView *)bubbleImageView
                            message:(id<JSMessageData>)message
+                  parentController:(JSMessagesViewController *)parentController
                  displaysTimestamp:(BOOL)displaysTimestamp
                          hasAvatar:(BOOL)hasAvatar
                    reuseIdentifier:(NSString *)reuseIdentifier
@@ -197,6 +201,7 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
         [self configureWithType:type
                 bubbleImageView:bubbleImageView
                         message:message
+               parentController:parentController
               displaysTimestamp:displaysTimestamp
                          avatar:hasAvatar];
     }
@@ -253,8 +258,8 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 - (void)setMessage:(id<JSMessageData>)message
 {
     BOOL thumbImage = NO;
-    if ([message respondsToSelector:@selector(thumbnailImageView)])
-        thumbImage = [message thumbnailImageView] != nil;
+    if ([message respondsToSelector:@selector(mediaURL)])
+        thumbImage = [message mediaURL] != nil;
 
     if (!thumbImage)        // ignore the text in an image context.
         [self setText:[message text]];

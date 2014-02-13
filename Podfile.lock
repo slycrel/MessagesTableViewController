@@ -1,10 +1,15 @@
 PODS:
   - JSQSystemSoundPlayer (1.4.0)
+  - SDWebImage (3.5.2):
+    - SDWebImage/Core
+  - SDWebImage/Core (3.5.2)
 
 DEPENDENCIES:
   - JSQSystemSoundPlayer
+  - SDWebImage
 
 SPEC CHECKSUMS:
   JSQSystemSoundPlayer: 28ccd01a92a0cebc6de6361e8499011b4cb6dab7
+  SDWebImage: fe7ce01ae4e0a884d168f59c9dd82d35baf8429e
 
 COCOAPODS: 0.29.0

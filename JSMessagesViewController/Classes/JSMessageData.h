@@ -43,7 +43,7 @@
 /**
  * @return The media URL for loading attached media content
  */
-- (UIImageView *)thumbnailImageView;
+- (NSURL *)mediaURL;
 
 
 @end

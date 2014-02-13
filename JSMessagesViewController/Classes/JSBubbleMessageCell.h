@@ -54,6 +54,7 @@
  *  @param type              A constant indicating a message type. @see JSBubbleMessageType for details.
  *  @param bubbleImageView   An image view initialized with bubble images. The `UIImageView` properties `image` and `highlightedImage` must not be `nil`. @see JSBubbleImageViewFactory.
  *  @param message           An object that conforms to the `JSMessageData` protocol containing the message data for the cell.
+ *  @param parentController  The parent table view controller.  Used for updating images from media URLs.
  *  @param displaysTimestamp A boolean value indicating whether or not the cell should display the date contained in message. Pass `YES` to display a timestamp, `NO` otherwise.
  *  @param hasAvatar         A boolean value indicating whether or not the cell should be initialized with an avatarImageView. Pass `YES` to initialize with an avatar, `NO` otherwise.
  *  @param reuseIdentifier   A string used to identify the cell object to be reused for drawing multiple rows of a JSMessagesViewController. This property must not be `nil`.
@@ -63,6 +64,7 @@
 - (instancetype)initWithBubbleType:(JSBubbleMessageType)type
                    bubbleImageView:(UIImageView *)bubbleImageView
                            message:(id<JSMessageData>)message
+                  parentController:(JSMessagesViewController *)parentController
                  displaysTimestamp:(BOOL)displaysTimestamp
                          hasAvatar:(BOOL)hasAvatar
                    reuseIdentifier:(NSString *)reuseIdentifier;

@@ -21,6 +21,5 @@ typedef void(^JSMessageWithImagesCachedImageCallback)(JSDemoViewController *cont
 @property (strong, nonatomic) JSDemoViewController *parentController;
 
 - (instancetype)initWithText:(NSString *)text sender:(NSString *)sender date:(NSDate *)date mediaURL:(NSURL *)mediaURL;
-- (UIImageView *)thumbnailImageView;
 
 @end

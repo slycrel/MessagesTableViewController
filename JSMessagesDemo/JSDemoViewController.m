@@ -141,12 +141,8 @@
 - (UIImageView *)bubbleImageViewWithType:(JSBubbleMessageType)type
                        forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // when the bubble thumbnail image is not inline, the image view returned here is used as a mask for the chat bubble.
-    // this is the currently expected default behavior.
-    id <JSMessageData> message = [self messageForRowAtIndexPath:indexPath];
-    if ([message respondsToSelector:@selector(thumbnailImageView)])
-        return [message thumbnailImageView];
-
+    // note that this method will not get called for image rows!
+    
     if (indexPath.row % 2) {
         return [JSBubbleImageViewFactory bubbleImageViewForType:type
                                                           color:[UIColor js_bubbleLightGrayColor]];

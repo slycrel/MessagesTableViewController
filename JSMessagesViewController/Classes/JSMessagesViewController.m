@@ -15,6 +15,8 @@
 #import "JSMessagesViewController.h"
 #import "JSMessageTextView.h"
 #import "NSString+JSMessagesView.h"
+#import "JSBubbleViewImageCache.h"
+
 
 @interface JSMessagesViewController () <JSDismissiveTextViewDelegate>
 
@@ -213,11 +215,13 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     JSBubbleMessageType type = [self.delegate messageTypeForRowAtIndexPath:indexPath];
-    
-    UIImageView *bubbleImageView = [self.delegate bubbleImageViewWithType:type
-                                                        forRowAtIndexPath:indexPath];
-    
     id<JSMessageData> message = [self.dataSource messageForRowAtIndexPath:indexPath];
+    UIImageView *bubbleImageView;
+    
+    if ([message respondsToSelector:@selector(mediaURL)] && [message mediaURL])
+        bubbleImageView = [JSBubbleViewImageCache cachedImageViewWithMessage:message completionBlock:nil];
+    else
+        bubbleImageView = [self.delegate bubbleImageViewWithType:type forRowAtIndexPath:indexPath];
     
     UIImageView *avatar = [self.dataSource avatarImageViewForRowAtIndexPath:indexPath sender:[message sender]];
     
@@ -232,15 +236,10 @@
     }
 
     if (!CellIdentifier) {
-        int imageCell = 0;
-        unsigned long imageNum = 0;
-        if ([message respondsToSelector:@selector(thumbnailImageView)] && [message thumbnailImageView]) {
-            imageNum = [[message thumbnailImageView] hash];
-        }
-        if (!([message respondsToSelector:@selector(inlineThumbnailImage)] && [message inlineThumbnailImage])) {
-            imageCell = 1;
-        }
-        CellIdentifier = [NSString stringWithFormat:@"JSMessageCell_%d_%d_%d_%d_%d_%lu", (int)type, displayTimestamp, avatar != nil, [message sender] != nil, imageCell, imageNum];
+        NSString *mediaURL = nil;
+        if ([message respondsToSelector:@selector(mediaURL)] && [message mediaURL])
+            mediaURL = [[message mediaURL] absoluteString];
+        CellIdentifier = [NSString stringWithFormat:@"JSMessageCell_%d_%d_%d_%d_%@", (int)type, displayTimestamp, avatar != nil, [message sender] != nil, mediaURL];
     }
     
     JSBubbleMessageCell *cell = (JSBubbleMessageCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -249,6 +248,7 @@
         cell = [[JSBubbleMessageCell alloc] initWithBubbleType:type
                                                bubbleImageView:bubbleImageView
                                                        message:message
+                                              parentController:self
                                              displaysTimestamp:displayTimestamp
                                                      hasAvatar:avatar != nil
                                                reuseIdentifier:CellIdentifier];
@@ -339,6 +339,37 @@
     }
     
     return YES;
+}
+
+- (void)updateRowForMessage:(id <JSMessageData>) message
+{
+    static BOOL updating = NO;
+    // possibly recursive -- if we are in the process of updating, don't actually re-update.
+    
+    if (updating)
+        return;
+    
+    NSIndexPath *updateIndexPath = nil;
+    @synchronized(self) {
+        updating = YES;
+        // find the cell for this message
+        for (int x = 0; !updateIndexPath && x < [self.tableView.dataSource numberOfSectionsInTableView:self.tableView]; x++)
+        {
+            for (int y = 0; !updateIndexPath && y < [self.tableView.dataSource tableView:self.tableView numberOfRowsInSection:x]; y++)
+            {
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:y inSection:x];
+                id <JSMessageData> aMessage = [self.dataSource messageForRowAtIndexPath:indexPath];
+                if ([aMessage isEqual:message])
+                    updateIndexPath = indexPath;
+            }
+        }
+        
+        // reload the table with this image
+        if (updateIndexPath) {
+            [self.tableView reloadRowsAtIndexPaths:@[updateIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+        }
+        updating = NO;
+    }
 }
 
 #pragma mark - Scroll view delegate

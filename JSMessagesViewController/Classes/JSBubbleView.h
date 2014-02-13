@@ -16,6 +16,8 @@
 #import "JSBubbleImageViewFactory.h"
 #import "JSMessage.h"
 
+@class JSMessagesViewController;
+
 /**
  *  An instance of JSBubbleView is a means for displaying text in a speech bubble image to be placed in a JSBubbleMessageCell. 
  *  @see JSBubbleMessageCell.
@@ -60,17 +62,20 @@
 /**
  *  Initializes and returns a bubble view object having the given frame, bubble type, and bubble image view.
  *
- *  @param frame           A rectangle specifying the initial location and size of the bubble view in its superview's coordinates.
- *  @param bubleType       A constant that specifies the type of the bubble view. @see JSBubbleMessageType.
- *  @param bubbleImageView An image view initialized with an image and highlighted image for this bubble view. @see JSBubbleImageViewFactory.
- *  @param thumbnailSize   A set width/height for displaying image thumbnails.  Zero width/height means dynamic sizing.
+ *  @param frame            A rectangle specifying the initial location and size of the bubble view in its superview's coordinates.
+ *  @param bubleType        A constant that specifies the type of the bubble view. @see JSBubbleMessageType.
+ *  @param bubbleImageView  An image view initialized with an image and highlighted image for this bubble view. @see JSBubbleImageViewFactory.
+ *  @param thumbnailSize    A set width/height for displaying image thumbnails.  Zero width/height means dynamic sizing.
+ *  @param messageData      The message data to be displayed within this view.
+ *  @param parentController The table view controller that this view is embedded within.  (Used to refresh cells after async loading of media images)
  *
  *  @return An initialized `JSBubbleView` object or `nil` if the object could not be successfully initialized.
  */
 - (instancetype)initWithFrame:(CGRect)frame
                    bubbleType:(JSBubbleMessageType)bubleType
               bubbleImageView:(UIImageView *)bubbleImageView
-                  messageData:(id <JSMessageData>)message;
+                  messageData:(id <JSMessageData>)message
+             parentController:(JSMessagesViewController *)parentController;
 
 
 #pragma mark - Setters

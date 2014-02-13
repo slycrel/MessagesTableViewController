@@ -18,6 +18,8 @@
 #import "JSAvatarImageFactory.h"
 #import "NSString+JSMessagesView.h"
 #import "UIImage+JSMessagesView.h"
+#import "JSBubbleViewImageCache.h"
+#import "JSMessagesViewController.h"
 #import <objc/runtime.h>
 
 #define kMarginTop 8.0f
@@ -28,6 +30,13 @@
 
 #define IMAGE_BUBBLE_CORNER_SIZE_IN_PIXELS 8.0f
 
+
+// extend this semi-private method to this class, don't want this used by any subclasses but we need it here.
+@interface JSMessagesViewController ()
+- (void)updateRowForMessage:(id <JSMessageData>) message;
+@end
+
+
 @interface JSBubbleView()
 
 - (void)setup;
@@ -37,6 +46,8 @@
 
 + (CGSize)textSizeForText:(NSString *)txt;
 + (CGSize)imageSizeForMessage:(id <JSMessageData>)message;
+
+@property (strong, nonatomic) JSMessagesViewController *parentController;
 
 @end
 
@@ -59,6 +70,7 @@
                    bubbleType:(JSBubbleMessageType)bubleType
               bubbleImageView:(UIImageView *)bubbleImageView
                   messageData:(id <JSMessageData>)message
+             parentController:(JSMessagesViewController *)parentController
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -66,6 +78,7 @@
         
         _type = bubleType;
         _message = message;
+        _parentController = parentController;
         
         bubbleImageView.userInteractionEnabled = YES;
         [self addSubview:bubbleImageView];
@@ -173,12 +186,16 @@
     _bubbleImageView.hidden = NO;
     
     UIImageView *imageView = nil;
-    if ([message respondsToSelector:@selector(thumbnailImageView)])
-        imageView = [message thumbnailImageView];
+    CGRect frame = [self bubbleFrame];
+    
+    if ([message respondsToSelector:@selector(mediaURL)] && [message mediaURL])
+        imageView = [JSBubbleViewImageCache cachedImageViewWithMessage:message completionBlock:^() {
+            [self.parentController updateRowForMessage:message];
+        }];
 
     if (imageView) {
         UIImageView *maskView = [JSBubbleImageViewFactory bubbleImageViewForType:self.type color:[UIColor whiteColor]];
-        maskView.frame = [self bubbleFrame];
+        maskView.frame = frame;
         UIImage *image = [imageView.image js_imageMaskWithImageView:maskView];
         _attachedImageView = [[UIImageView alloc] initWithImage:image];
         _bubbleImageView.hidden = YES;
@@ -310,8 +327,9 @@
 {
     CGSize imageSize = CGSizeZero;
     UIImageView *imageView = nil;
-    if ([message respondsToSelector:@selector(thumbnailImageView)])
-        imageView = [message thumbnailImageView];
+    if ([message respondsToSelector:@selector(mediaURL)] && [message mediaURL]) {
+        imageView = [JSBubbleViewImageCache cachedImageViewWithMessage:message completionBlock:nil];
+    }
     if (imageView.frame.size.height) {
         
         CGFloat cellAvailableImageWidth = [UIScreen mainScreen].applicationFrame.size.width * 0.70f;
