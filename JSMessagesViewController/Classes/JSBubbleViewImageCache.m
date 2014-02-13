@@ -8,6 +8,7 @@
 
 #import "JSBubbleViewImageCache.h"
 #import <SDWebImage/UIImageView+WebCache.h>
+#import "UIImage+JSMessagesView.h"
 
 
 @import MobileCoreServices;
@@ -68,11 +69,18 @@ static NSMutableDictionary *imageCache;
 + (NSString *)imageKey:(id<JSMessageData>)message
 {
     NSAssert([message respondsToSelector:@selector(mediaURL)], @"Unexpectedly trying to key an image on an unsupported message type!");
-    return [NSString stringWithFormat:@"%@_%lu", [[message mediaURL] absoluteString], [message hash]];
+    return [NSString stringWithFormat:@"%@_%lu", [[message mediaURL] absoluteString], (unsigned long)[message hash]];
 }
 
 
-+ (UIImageView *)cachedImageViewWithMessage:(id <JSMessageData>)message completionBlock:(JSImageCacheImageLoadCompletionBlock)completion
++ (UIImageView *)cachedImageViewWithMessage:(id <JSMessageData>)message
+{
+    // type is unused if there is no completion block
+    return  [self cachedImageViewWithMessage:message type:0 completionBlock:nil];
+}
+
+
++ (UIImageView *)cachedImageViewWithMessage:(id <JSMessageData>)message type:(JSBubbleMessageType)type completionBlock:(JSImageCacheImageLoadCompletionBlock)completion
 {
     NSAssert([message respondsToSelector:@selector(mediaURL)], @"Unexpectedly trying to cache an image on an unsupported message type!");
     NSURL* url = [message mediaURL];
@@ -82,8 +90,8 @@ static NSMutableDictionary *imageCache;
     UIImageView *imageView = [JSBubbleViewImageCache cachedImageViewWithKey:messageKey];
     
     // Check to see if the URL can support an image.
-    NSString *type =(__bridge_transfer NSString*)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)[[url absoluteString] pathExtension], NULL);
-    if (!UTTypeConformsTo((__bridge CFStringRef)type, (__bridge CFStringRef)@"public.image"))
+    NSString *UTIType =(__bridge_transfer NSString*)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)[[url absoluteString] pathExtension], NULL);
+    if (!UTTypeConformsTo((__bridge CFStringRef)UTIType, (__bridge CFStringRef)@"public.image"))
     {
         // if not, return the placeholder image.  We will never go further (yet)
         return imageView;
@@ -98,6 +106,12 @@ static NSMutableDictionary *imageCache;
                              {
                                  // update the image
                                  UIImageView *blockImageView = [self cachedImageViewWithKey:messageKey];
+                                 blockImageView.image = image;
+                                 
+                                 // mask the image with the placeholder
+                                 UIImageView *maskView = [JSBubbleImageViewFactory bubbleImageViewForType:type color:[UIColor whiteColor]];
+                                 maskView.frame = CGRectMake(0, 0, 200, 200);
+                                 UIImage *image = [blockImageView.image js_imageMaskWithImageView:maskView];
                                  blockImageView.image = image;
                                  
                                  // remove the placeholder

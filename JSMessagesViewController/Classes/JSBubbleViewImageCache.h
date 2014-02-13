@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "JSMessageData.h"
+#import "JSBubbleImageViewFactory.h"
 
 @class JSMessagesViewController;
 
@@ -16,7 +17,8 @@ typedef void(^JSImageCacheImageLoadCompletionBlock)();
 
 @interface JSBubbleViewImageCache : NSObject
 
-+ (UIImageView *)cachedImageViewWithMessage:(id <JSMessageData>)message completionBlock:(JSImageCacheImageLoadCompletionBlock)completion;
++ (UIImageView *)cachedImageViewWithMessage:(id <JSMessageData>)message;
++ (UIImageView *)cachedImageViewWithMessage:(id <JSMessageData>)message type:(JSBubbleMessageType)type completionBlock:(JSImageCacheImageLoadCompletionBlock)completion;
 + (void)clearImageCache;
 
 @end

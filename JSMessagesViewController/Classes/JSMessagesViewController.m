@@ -219,7 +219,7 @@
     UIImageView *bubbleImageView;
     
     if ([message respondsToSelector:@selector(mediaURL)] && [message mediaURL])
-        bubbleImageView = [JSBubbleViewImageCache cachedImageViewWithMessage:message completionBlock:nil];
+        bubbleImageView = [JSBubbleViewImageCache cachedImageViewWithMessage:message];
     else
         bubbleImageView = [self.delegate bubbleImageViewWithType:type forRowAtIndexPath:indexPath];
     

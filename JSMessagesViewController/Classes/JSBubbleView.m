@@ -189,16 +189,14 @@
     CGRect frame = [self bubbleFrame];
     
     if ([message respondsToSelector:@selector(mediaURL)] && [message mediaURL])
-        imageView = [JSBubbleViewImageCache cachedImageViewWithMessage:message completionBlock:^() {
+        imageView = [JSBubbleViewImageCache cachedImageViewWithMessage:message type:self.type completionBlock:^() {
             [self.parentController updateRowForMessage:message];
         }];
 
     if (imageView) {
-        UIImageView *maskView = [JSBubbleImageViewFactory bubbleImageViewForType:self.type color:[UIColor whiteColor]];
-        maskView.frame = frame;
-        UIImage *image = [imageView.image js_imageMaskWithImageView:maskView];
-        _attachedImageView = [[UIImageView alloc] initWithImage:image];
-        _bubbleImageView.hidden = YES;
+        _attachedImageView = imageView;
+        _attachedImageView.frame = frame;
+//        _bubbleImageView.hidden = YES;
 
         [self addSubview:_attachedImageView];
     }
@@ -328,7 +326,7 @@
     CGSize imageSize = CGSizeZero;
     UIImageView *imageView = nil;
     if ([message respondsToSelector:@selector(mediaURL)] && [message mediaURL]) {
-        imageView = [JSBubbleViewImageCache cachedImageViewWithMessage:message completionBlock:nil];
+        imageView = [JSBubbleViewImageCache cachedImageViewWithMessage:message];
     }
     if (imageView.frame.size.height) {
         
