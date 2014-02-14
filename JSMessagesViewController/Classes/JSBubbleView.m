@@ -189,7 +189,7 @@
     CGRect frame = [self bubbleFrame];
     
     if ([message respondsToSelector:@selector(mediaURL)] && [message mediaURL])
-        imageView = [JSBubbleViewImageCache cachedImageViewWithMessage:message type:self.type completionBlock:^() {
+        imageView = [JSBubbleViewImageCache cachedImageViewWithMessage:message type:self.type maskFrame:frame completionBlock:^() {
             [self.parentController updateRowForMessage:message];
         }];
 
@@ -354,7 +354,6 @@
     
     // if we are sending an image that fills the chat bubble, ignore any message text
     if (imageSize.height > 0) {
-        textSize = CGSizeZero;
         return CGSizeMake(round(imageSize.width), round(imageSize.height));
     }
     

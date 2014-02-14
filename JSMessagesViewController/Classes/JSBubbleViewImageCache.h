@@ -18,7 +18,6 @@ typedef void(^JSImageCacheImageLoadCompletionBlock)();
 @interface JSBubbleViewImageCache : NSObject
 
 + (UIImageView *)cachedImageViewWithMessage:(id <JSMessageData>)message;
-+ (UIImageView *)cachedImageViewWithMessage:(id <JSMessageData>)message type:(JSBubbleMessageType)type completionBlock:(JSImageCacheImageLoadCompletionBlock)completion;
-+ (void)clearImageCache;
++ (UIImageView *)cachedImageViewWithMessage:(id <JSMessageData>)message type:(JSBubbleMessageType)type maskFrame:(CGRect)maskFrame completionBlock:(JSImageCacheImageLoadCompletionBlock)completion;
 
 @end

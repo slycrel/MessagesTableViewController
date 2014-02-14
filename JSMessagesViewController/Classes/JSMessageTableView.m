@@ -18,10 +18,4 @@
 
 @implementation JSMessageTableView
 
-- (void)dealloc
-{
-    // clean up our in-memory disk cache when we discard the table.
-    [JSBubbleViewImageCache clearImageCache];
-}
-
 @end
